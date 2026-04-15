@@ -1,6 +1,21 @@
 version: '3.8'
 
 services:
+  # React Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: loyalty_frontend
+    ports:
+      - "5173:80"
+    environment:
+      - VITE_API_URL=http://backend:8000/api
+    depends_on:
+      - backend
+    networks:
+      - loyalty_network
+
   # Laravel Backend
   backend:
     build:
@@ -99,6 +114,21 @@ services:
     networks:
       - loyalty_network
     command: php artisan queue:work --tries=3
+
+  # phpMyAdmin for database management
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: loyalty_phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: secret
+    depends_on:
+      - mysql
+    networks:
+      - loyalty_network
 
 networks:
   loyalty_network:
