@@ -354,6 +354,402 @@
                 ]
             }
         },
+        "/api/v1/payments": {
+            "post": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Process payment",
+                "description": "Process a payment for a product and award cashback points",
+                "operationId": "1a3150661130c40a402f883e24b2a94c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "product_id"
+                                ],
+                                "properties": {
+                                    "product_id": {
+                                        "description": "ID of the product to purchase",
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Payment successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Payment successful"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "cashback_points": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "payment": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "user_id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "product_id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "amount": {
+                                                            "type": "string",
+                                                            "example": "99.99"
+                                                        },
+                                                        "status": {
+                                                            "type": "string",
+                                                            "example": "completed"
+                                                        },
+                                                        "transaction_id": {
+                                                            "type": "string",
+                                                            "example": "TXN_123456"
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "example": "2026-04-15T10:00:00.000000Z"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Payment failed"
+                    },
+                    "401": {
+                        "description": "Unauthorized - authentication required"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/payments/history": {
+            "get": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Get payment history",
+                "description": "Retrieve the current user's payment history",
+                "operationId": "a5f1a81a4fd6501c8cfb25a71aac7a83",
+                "responses": {
+                    "200": {
+                        "description": "Payment history retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Payment history retrieved successfully"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "user_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "product_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "amount": {
+                                                        "type": "string",
+                                                        "example": "99.99"
+                                                    },
+                                                    "status": {
+                                                        "type": "string",
+                                                        "example": "completed"
+                                                    },
+                                                    "transaction_id": {
+                                                        "type": "string",
+                                                        "example": "TXN_123456"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "example": "2026-04-15T10:00:00.000000Z"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - authentication required"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/payments/total-spending": {
+            "get": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Get total spending",
+                "description": "Retrieve the current user's total spending amount",
+                "operationId": "5319a01b8ebcf56e76f254686efc2093",
+                "responses": {
+                    "200": {
+                        "description": "Total spending retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Total spending retrieved successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "total_spent": {
+                                                    "type": "string",
+                                                    "example": "299.97"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - authentication required"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/products": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Get all products",
+                "description": "Retrieve a list of all available products",
+                "operationId": "03dbb6e3c8a84317e1702129d3f71578",
+                "responses": {
+                    "200": {
+                        "description": "Products retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Products retrieved successfully"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Wireless Headphones"
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "example": "High-quality wireless headphones with noise cancellation"
+                                                    },
+                                                    "price": {
+                                                        "type": "string",
+                                                        "example": "79.99"
+                                                    },
+                                                    "sku": {
+                                                        "type": "string",
+                                                        "example": "WH-001"
+                                                    },
+                                                    "stock": {
+                                                        "type": "integer",
+                                                        "example": 50
+                                                    },
+                                                    "image_url": {
+                                                        "type": "string",
+                                                        "example": "https://via.placeholder.com/400x300?text=Wireless+Headphones"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "example": "2026-04-15T10:00:00.000000Z"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "example": "2026-04-15T10:00:00.000000Z"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/products/{id}": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Get single product",
+                "description": "Retrieve details of a specific product",
+                "operationId": "da353359e3d404b54de4afd025bd76a0",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Product ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Product retrieved successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Wireless Headphones"
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "High-quality wireless headphones with noise cancellation"
+                                                },
+                                                "price": {
+                                                    "type": "string",
+                                                    "example": "79.99"
+                                                },
+                                                "sku": {
+                                                    "type": "string",
+                                                    "example": "WH-001"
+                                                },
+                                                "stock": {
+                                                    "type": "integer",
+                                                    "example": 50
+                                                },
+                                                "image_url": {
+                                                    "type": "string",
+                                                    "example": "https://via.placeholder.com/400x300?text=Wireless+Headphones"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "example": "2026-04-15T10:00:00.000000Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "example": "2026-04-15T10:00:00.000000Z"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Product not found"
+                    }
+                }
+            }
+        },
         "/users/{user}": {
             "get": {
                 "tags": [
@@ -642,6 +1038,14 @@
         {
             "name": "Users",
             "description": "User management endpoints"
+        },
+        {
+            "name": "Payments",
+            "description": "Payments"
+        },
+        {
+            "name": "Products",
+            "description": "Products"
         },
         {
             "name": "Admin",
