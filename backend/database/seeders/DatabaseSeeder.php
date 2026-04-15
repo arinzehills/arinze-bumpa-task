@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             BadgeSeeder::class,
             AchievementSeeder::class,
+            ProductSeeder::class,
         ]);
     }
 }
