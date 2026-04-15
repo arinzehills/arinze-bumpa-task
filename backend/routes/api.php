@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Modules\UserService\Http\Controllers\UserController;
 use App\Modules\UserService\Http\Controllers\AuthController;
+use App\Modules\LoyaltyService\Http\Controllers\LoyaltyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,5 +31,9 @@ Route::prefix('v1')->group(function () {
     Route::prefix('admin')->group(function () {
         Route::get('/users/achievements', [UserController::class, 'getAllUsersAchievements']);
     });
+
+    // Loyalty routes
+    Route::get('/achievements', [LoyaltyController::class, 'getAllAchievements']);
+    Route::get('/badges', [LoyaltyController::class, 'getAllBadges']);
 
 });
