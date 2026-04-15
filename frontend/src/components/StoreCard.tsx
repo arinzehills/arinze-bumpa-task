@@ -5,26 +5,61 @@ interface StoreCardProps {
   name: string
   description: string
   icon: string
+  backgroundColor?: string
+  iconColor?: string
   onClick: () => void
 }
 
-export const StoreCard = ({ name, description, icon, onClick }: StoreCardProps) => {
+export const StoreCard = ({
+  name,
+  description,
+  icon,
+  backgroundColor = 'bg-bg-secondary',
+  iconColor,
+  onClick
+}: StoreCardProps) => {
+  // Use provided icon color or default based on background
+  const finalIconColor = iconColor || 'text-brand-primary'
+
   return (
     <div
       onClick={onClick}
-      className="glass rounded-lg p-6 cursor-pointer transition-all duration-300 hover:scale-105 hover:border-brand-secondary border border-border-color flex flex-col items-center text-center"
+      className="rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-lg bg-bg-light border border-border-color flex flex-col h-full"
     >
-      <div className="mb-4 p-4 bg-brand-secondary/20 rounded-lg">
-        <Icon icon={icon} width={40} height={40} className="text-brand-secondary" />
+      {/* Showcase Area */}
+      <div className={`${backgroundColor} h-48 flex items-center justify-center`}>
+        <div className="p-6">
+          <Icon
+            icon={icon}
+            width={64}
+            height={64}
+            className={finalIconColor}
+            style={{
+              color: finalIconColor === 'text-white' ? '#ffffff' :
+                     finalIconColor === 'text-text-primary' ? '#1d1d1f' :
+                     '#2255ff'
+            }}
+          />
+        </div>
       </div>
 
-      <h3 className="text-lg font-semibold text-text-primary mb-2">{name}</h3>
-      <p className="text-sm text-text-secondary mb-4">{description}</p>
+      {/* Content Area */}
+      <div className="flex-1 p-6 flex flex-col justify-between">
+        <div>
+          <h3 className="text-xl font-semibold text-text-primary mb-2">{name}</h3>
+          <p className="text-sm text-text-secondary">{description}</p>
+        </div>
 
-      <div className="mt-auto pt-2">
-        <button className="text-brand-secondary hover:underline font-medium text-sm">
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault()
+            onClick()
+          }}
+          className="text-brand-primary hover:opacity-80 font-medium text-sm mt-4 inline-block"
+        >
           Shop Now →
-        </button>
+        </a>
       </div>
     </div>
   )
