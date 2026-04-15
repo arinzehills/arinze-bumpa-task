@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { useAppModeStore } from './useAppModeStore'
 
 export interface AdminUser {
   id: string
@@ -36,6 +37,8 @@ export const useAdminAuthStore = create<AdminAuthStore>()(
       },
 
       logout: () => {
+        // Reset app mode to user
+        useAppModeStore.getState().setMode('user')
         set({
           user: null,
           token: null,

@@ -5,6 +5,7 @@ import { Button } from '@components/Button'
 import { InputField } from '@components/InputField'
 import { usePost } from '@app/hooks/usePost'
 import { useAuthStore } from './stores/useAuthStore'
+import { useAppModeStore } from './stores/useAppModeStore'
 
 interface LoginResponse {
   user: {
@@ -33,6 +34,7 @@ const validationSchema = yup.object({
 export const Login = () => {
   const navigate = useNavigate()
   const { login } = useAuthStore()
+  const { setMode } = useAppModeStore()
   const { isLoading, execute } = usePost<LoginResponse>()
 
   const formik = useFormik({
@@ -55,6 +57,9 @@ export const Login = () => {
       )
 
       if (response) {
+        // Set mode to user
+        setMode('user')
+
         // Store auth data
         login(response.user, response.token)
 

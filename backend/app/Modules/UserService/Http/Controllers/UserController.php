@@ -45,13 +45,20 @@ class UserController extends BaseController
 
     /**
      * Get all users with achievements (Admin)
-     * GET /api/admin/users/achievements
+     * GET /api/admin/users/achievements?page=1&limit=10
      */
-    public function getAllUsersAchievements()
+    public function getAllUsersAchievements(Request $request)
     {
         try {
-            $users = $this->userService->getAllUsersWithAchievements();
-            return $this->successResponse($users, 'All users achievements retrieved successfully');
+            $page = $request->query('page', 1);
+            $limit = $request->query('limit', 10);
+
+            $result = $this->userService->getAllUsersWithAchievementsPaginated($page, $limit);
+            return $this->paginatedResponse(
+                $result['users'],
+                $result['pagination'],
+                'All users achievements retrieved successfully'
+            );
         } catch (\Exception $e) {
             return $this->handleException($e);
         }

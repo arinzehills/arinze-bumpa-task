@@ -50,18 +50,34 @@ abstract class BaseController extends Controller
     /**
      * Paginated response
      */
-    protected function paginatedResponse($data)
+    protected function paginatedResponse($data, $pagination = null, $message = 'Success', $code = 200)
     {
+        // Handle Laravel paginator object
+        if (is_object($data) && method_exists($data, 'items')) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'data' => [
+                    'items' => $data->items(),
+                    'pagination' => [
+                        'total' => $data->total(),
+                        'per_page' => $data->perPage(),
+                        'current_page' => $data->currentPage(),
+                        'last_page' => $data->lastPage(),
+                    ]
+                ]
+            ], $code);
+        }
+
+        // Handle custom pagination format
         return response()->json([
             'success' => true,
-            'data' => $data->items(),
-            'pagination' => [
-                'total' => $data->total(),
-                'per_page' => $data->perPage(),
-                'current_page' => $data->currentPage(),
-                'last_page' => $data->lastPage(),
+            'message' => $message,
+            'data' => [
+                'items' => $data,
+                'pagination' => $pagination
             ]
-        ], 200);
+        ], $code);
     }
 
     /**

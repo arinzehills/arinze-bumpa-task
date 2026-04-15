@@ -5,6 +5,7 @@ import { Button } from '@components/Button'
 import { InputField } from '@components/InputField'
 import { usePost } from '@app/hooks/usePost'
 import { useAdminAuthStore } from './stores/useAdminAuthStore'
+import { useAppModeStore } from './stores/useAppModeStore'
 
 interface AdminLoginResponse {
   user: {
@@ -30,6 +31,7 @@ const validationSchema = yup.object({
 export const AdminLogin = () => {
   const navigate = useNavigate()
   const { login } = useAdminAuthStore()
+  const { setMode } = useAppModeStore()
   const { isLoading, execute } = usePost<AdminLoginResponse>()
 
   const formik = useFormik({
@@ -52,6 +54,9 @@ export const AdminLogin = () => {
       )
 
       if (response) {
+        // Set mode to admin
+        setMode('admin')
+
         // Store admin auth data
         login(response.user, response.token)
 

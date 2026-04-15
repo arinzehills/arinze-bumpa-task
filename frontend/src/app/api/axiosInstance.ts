@@ -20,38 +20,13 @@ axiosInstance.interceptors.request.use(
   }
 )
 
-// Response interceptor - handle 401 and refresh token
+// Response interceptor - handle 401 errors
 axiosInstance.interceptors.response.use(
   (response) => response,
-  async (error) => {
-    const originalRequest = error.config
-
-    // Handle 401 Unauthorized
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true
-
-      try {
-        const refreshToken = useAuthStore.getState().refreshToken
-        if (!refreshToken) {
-          useAuthStore.getState().logout()
-          return Promise.reject(error)
-        }
-
-        // Try to refresh the token
-        const response = await axios.post(`${ENV.API_BASE_URL}/auth/refresh`, {
-          refresh_token: refreshToken,
-        })
-
-        const { token } = response.data
-        useAuthStore.getState().setToken(token)
-
-        // Retry original request with new token
-        originalRequest.headers.Authorization = `Bearer ${access_token}`
-        return axiosInstance(originalRequest)
-      } catch (refreshError) {
-        useAuthStore.getState().logout()
-        return Promise.reject(refreshError)
-      }
+  (error) => {
+    // Handle 401 Unauthorized - logout user
+    if (error.response?.status === 401) {
+      useAuthStore.getState().logout()
     }
 
     return Promise.reject(error)
