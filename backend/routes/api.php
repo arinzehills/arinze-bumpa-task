@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Modules\UserService\Http\Controllers\UserController;
 use App\Modules\UserService\Http\Controllers\AuthController;
 use App\Modules\LoyaltyService\Http\Controllers\LoyaltyController;
+use App\Modules\ECommerceProductService\Http\Controllers\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,6 +31,12 @@ Route::prefix('v1')->group(function () {
     // Admin routes
     Route::prefix('admin')->group(function () {
         Route::get('/users/achievements', [UserController::class, 'getAllUsersAchievements']);
+    });
+
+    // Product routes
+    Route::prefix('products')->group(function () {
+        Route::get('/', [ProductController::class, 'index']);
+        Route::get('/{product}', [ProductController::class, 'show']);
     });
 
     // Loyalty routes
