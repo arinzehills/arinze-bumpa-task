@@ -1,11 +1,13 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { useAppModeStore } from './useAppModeStore'
 
 export interface User {
   id: string
   email: string
   name: string
-  role?: 'user' | 'admin'
+  user_type?: 'admin' | 'user' | 'vendor'
+  role?: 'admin' | 'super_admin' | 'user'
   total_points?: number
   current_badge_id?: string | null
   current_badge_name?: string | null
@@ -45,6 +47,8 @@ export const useAuthStore = create<AuthStore>()(
       },
 
       logout: () => {
+        // Reset app mode to user
+        useAppModeStore.getState().setMode('user')
         set({
           user: null,
           token: null,
@@ -63,6 +67,8 @@ export const useAuthStore = create<AuthStore>()(
       },
 
       clearAuth: () => {
+        // Reset app mode to user
+        useAppModeStore.getState().setMode('user')
         set({
           user: null,
           token: null,

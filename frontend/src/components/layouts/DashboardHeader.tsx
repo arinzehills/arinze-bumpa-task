@@ -1,21 +1,24 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useAuthStore } from '@modules/auth/stores/useAuthStore'
-import { Icon } from '@iconify/react'
+import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
+import { Icon } from "@iconify/react";
+import { useAdminAuthStore } from "@app/stores/useAdminAuthStore";
+import { useAuthStore } from "@app/stores/useAuthStore";
 
 interface DashboardHeaderProps {
-  onMenuClick: () => void
-  isAdmin?: boolean
+  onMenuClick: () => void;
+  isAdmin?: boolean;
 }
 
 export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   onMenuClick,
   isAdmin = false,
 }) => {
-  const navigate = useNavigate()
-  const { user, logout } = useAuthStore()
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const dropdownRef = useRef<HTMLDivElement>(null)
+  const navigate = useNavigate();
+  const { user, logout } = useAuthStore();
+  const { logout: adminLogout } = useAdminAuthStore();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -23,19 +26,19 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
         dropdownRef.current &&
         !dropdownRef.current.contains(event.target as Node)
       ) {
-        setIsDropdownOpen(false)
+        setIsDropdownOpen(false);
       }
-    }
+    };
 
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleLogout = () => {
-    logout()
-    navigate(isAdmin ? '/admin-login' : '/login')
-    setIsDropdownOpen(false)
-  }
+    isAdmin ? adminLogout() : logout();
+    navigate(isAdmin ? "/admin-login" : "/login");
+    setIsDropdownOpen(false);
+  };
 
   return (
     <header className="bg-bg-secondary border-b border-border-color p-4">
@@ -52,10 +55,10 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
 
           <div>
             <h1 className="text-xl font-bold text-text-primary">
-              {isAdmin ? 'Admin Dashboard' : 'Dashboard'}
+              {isAdmin ? "Admin Dashboard" : "Dashboard"}
             </h1>
             <p className="text-xs text-text-muted hidden sm:block">
-              Welcome back, {user?.name || 'User'}
+              Welcome back, {user?.name || "User"}
             </p>
           </div>
         </div>
@@ -69,18 +72,18 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
               className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-bg-elevated transition-colors"
             >
               <div className="w-8 h-8 rounded-full bg-brand-primary flex items-center justify-center text-white text-sm font-bold">
-                {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                {user?.name?.charAt(0)?.toUpperCase() || "U"}
               </div>
               <div className="hidden sm:block text-left">
                 <p className="text-sm font-medium text-text-primary">
-                  {user?.name || 'User'}
+                  {user?.name || "User"}
                 </p>
                 <p className="text-xs text-text-muted">{user?.email}</p>
               </div>
               <Icon
                 icon="ph:caret-down"
                 className={`text-lg text-text-muted transition-transform duration-200 ${
-                  isDropdownOpen ? 'rotate-180' : ''
+                  isDropdownOpen ? "rotate-180" : ""
                 }`}
               />
             </button>
@@ -97,7 +100,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                   </div>
 
                   <button
-                    onClick={() => navigate('/')}
+                    onClick={() => navigate("/")}
                     className="w-full flex items-center gap-3 px-4 py-3 text-sm text-text-primary hover:bg-bg-elevated transition-colors"
                   >
                     <Icon icon="ph:house" className="text-lg" />
@@ -118,5 +121,5 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
         </div>
       </div>
     </header>
-  )
-}
+  );
+};

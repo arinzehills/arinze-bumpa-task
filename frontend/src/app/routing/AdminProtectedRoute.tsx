@@ -16,7 +16,7 @@ export const AdminProtectedRoute = () => {
   }
 
   // Check if user is admin
-  if (user?.role !== "admin") {
+  if (user?.user_type !== "admin") {
     SideToast.FireWarning({
       title: "Access Denied",
       message: "Admin access required to view this page",

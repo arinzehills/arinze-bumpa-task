@@ -1,52 +1,52 @@
-import { useNavigate } from 'react-router-dom'
-import { useFormik } from 'formik'
-import * as yup from 'yup'
-import { Button } from '@components/Button'
-import { InputField } from '@components/InputField'
-import { usePost } from '@app/hooks/usePost'
-import { useAuthStore } from './stores/useAuthStore'
-import { useAppModeStore } from './stores/useAppModeStore'
+import { useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
+import * as yup from "yup";
+import { Button } from "@components/Button";
+import { InputField } from "@components/InputField";
+import { usePost } from "@app/hooks/usePost";
+import { useAppModeStore } from "../../app/stores/useAppModeStore";
+import { useAuthStore } from "@app/stores/useAuthStore";
 
 interface LoginResponse {
   user: {
-    id: string
-    email: string
-    name: string
-    user_type?: 'admin' | 'user' | 'vendor'
-    role?: 'admin' | 'super_admin' | 'user'
-    total_points?: number
-    current_badge_id?: string | null
-    current_badge_name?: string | null
-  }
-  token: string
+    id: string;
+    email: string;
+    name: string;
+    user_type?: "admin" | "user" | "vendor";
+    role?: "admin" | "super_admin" | "user";
+    total_points?: number;
+    current_badge_id?: string | null;
+    current_badge_name?: string | null;
+  };
+  token: string;
 }
 
 const validationSchema = yup.object({
   email: yup
     .string()
-    .email('Invalid email address')
-    .required('Email is required'),
+    .email("Invalid email address")
+    .required("Email is required"),
   password: yup
     .string()
-    .min(6, 'Password must be at least 6 characters')
-    .required('Password is required'),
-})
+    .min(6, "Password must be at least 6 characters")
+    .required("Password is required"),
+});
 
 export const Login = () => {
-  const navigate = useNavigate()
-  const { login } = useAuthStore()
-  const { setMode } = useAppModeStore()
-  const { isLoading, execute } = usePost<LoginResponse>()
+  const navigate = useNavigate();
+  const { login } = useAuthStore();
+  const { setMode } = useAppModeStore();
+  const { isLoading, execute } = usePost<LoginResponse>();
 
   const formik = useFormik({
     initialValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
     validationSchema,
     onSubmit: async (values) => {
       const response = await execute(
-        '/auth/login',
+        "/auth/login",
         {
           email: values.email,
           password: values.password,
@@ -54,31 +54,35 @@ export const Login = () => {
         {
           canToastSuccess: true,
           canToastError: true,
-        }
-      )
+        },
+      );
 
       if (response) {
         // Set mode to user
-        setMode('user')
+        setMode("user");
 
         // Store auth data
-        login(response.user, response.token)
+        login(response.user, response.token);
 
         // Redirect based on user type
-        if (response.user.user_type === 'admin') {
-          navigate('/admin')
+        if (response.user.user_type === "admin") {
+          navigate("/admin");
         } else {
-          navigate('/dashboard')
+          navigate("/dashboard");
         }
       }
     },
-  })
+  });
 
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-text-primary mb-2">Welcome Back</h1>
-        <p className="text-text-secondary">Sign in to view your rewards and achievements</p>
+        <h1 className="text-3xl font-bold text-text-primary mb-2">
+          Welcome Back
+        </h1>
+        <p className="text-text-secondary">
+          Sign in to view your rewards and achievements
+        </p>
       </div>
 
       <form onSubmit={formik.handleSubmit} className="space-y-4">
@@ -90,7 +94,11 @@ export const Login = () => {
           value={formik.values.email}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
-          error={formik.touched.email && formik.errors.email ? formik.errors.email : ''}
+          error={
+            formik.touched.email && formik.errors.email
+              ? formik.errors.email
+              : ""
+          }
         />
 
         <InputField
@@ -105,7 +113,7 @@ export const Login = () => {
           error={
             formik.touched.password && formik.errors.password
               ? formik.errors.password
-              : ''
+              : ""
           }
         />
 
@@ -116,15 +124,15 @@ export const Login = () => {
           fullWidth
           loading={isLoading}
         >
-          {isLoading ? 'Signing in...' : 'Sign In'}
+          {isLoading ? "Signing in..." : "Sign In"}
         </Button>
       </form>
 
       <div className="space-y-4 text-center text-text-secondary text-sm">
         <p>
-          Don't have an account?{' '}
+          Don't have an account?{" "}
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate("/")}
             className="text-brand-primary hover:opacity-80 font-medium"
           >
             Go back home
@@ -132,9 +140,9 @@ export const Login = () => {
         </p>
         <div className="pt-2 border-t border-border-color">
           <p>
-            Are you an admin?{' '}
+            Are you an admin?{" "}
             <button
-              onClick={() => navigate('/admin-login')}
+              onClick={() => navigate("/admin-login")}
               className="text-brand-primary hover:opacity-80 font-medium"
             >
               Admin login
@@ -143,5 +151,5 @@ export const Login = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

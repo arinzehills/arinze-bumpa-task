@@ -1,22 +1,19 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { User } from './useAuthStore'
+import { useAppModeStore } from './useAppModeStore'
 
-export interface AdminUser {
-  id: string
-  email: string
-  name: string
-  role: 'admin'
-}
+
 
 interface AdminAuthStore {
-  user: AdminUser | null
+  user: User | null
   token: string | null
   isAuthenticated: boolean
 
-  login: (user: AdminUser, token: string) => void
+  login: (user: User, token: string) => void
   logout: () => void
   setToken: (token: string) => void
-  setUser: (user: AdminUser) => void
+  setUser: (user: User) => void
   clearAuth: () => void
 }
 
@@ -36,6 +33,8 @@ export const useAdminAuthStore = create<AdminAuthStore>()(
       },
 
       logout: () => {
+        // Reset app mode to user
+        useAppModeStore.getState().setMode('user')
         set({
           user: null,
           token: null,

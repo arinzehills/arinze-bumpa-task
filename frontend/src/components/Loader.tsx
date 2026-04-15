@@ -1,20 +1,19 @@
+import { Icon } from '@iconify/react'
+
 interface LoaderProps {
-  size?: 'sm' | 'md' | 'lg'
-  className?: string
+  isCentralized?: boolean
 }
 
-export const Loader = ({ size = 'md', className = '' }: LoaderProps) => {
-  const sizeClasses = {
-    sm: 'w-4 h-4 border-2',
-    md: 'w-8 h-8 border-3',
-    lg: 'w-12 h-12 border-4',
-  }
-
+export const Loader = ({ isCentralized = true }: LoaderProps) => {
   return (
     <div
-      className={`inline-block rounded-full border-border-color border-t-brand-secondary animate-spin ${sizeClasses[size]} ${className}`}
-      role="status"
-      aria-label="Loading"
-    />
+      className={`${
+        isCentralized ? 'h-[60vh] flex items-center justify-center' : ''
+      }`}
+    >
+      <div className="bg-brand-primary text-white w-24 h-24 rounded-full flex flex-col items-center justify-center">
+        <Icon icon="ph:spinner" className="animate-spin h-10 w-10" />
+      </div>
+    </div>
   )
 }
