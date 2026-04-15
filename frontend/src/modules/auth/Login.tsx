@@ -12,7 +12,8 @@ interface LoginResponse {
     id: string
     email: string
     name: string
-    role?: 'user' | 'admin'
+    user_type?: 'admin' | 'user' | 'vendor'
+    role?: 'admin' | 'super_admin' | 'user'
     total_points?: number
     current_badge_id?: string | null
     current_badge_name?: string | null
@@ -63,9 +64,9 @@ export const Login = () => {
         // Store auth data
         login(response.user, response.token)
 
-        // Redirect based on role
-        if (response.user.role === 'admin') {
-          navigate('/admin/dashboard')
+        // Redirect based on user type
+        if (response.user.user_type === 'admin') {
+          navigate('/admin')
         } else {
           navigate('/dashboard')
         }
