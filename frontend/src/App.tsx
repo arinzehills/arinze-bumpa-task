@@ -6,8 +6,8 @@ import ProductDetail from '@modules/ecommerce/pages/ProductDetail'
 import { AuthLayout } from '@app/layouts/AuthLayout'
 import { Login } from '@modules/auth/Login'
 import { AdminLogin } from '@modules/auth/AdminLogin'
-import { ProtectedRoute } from '@app/routing/ProtectedRoute'
 import { AdminRoutes } from '@app/routing/AdminRoutes'
+import { UserRoutes } from '@app/routing/UserRoutes'
 import Unauthorized from '@components/Unauthorized'
 
 function App() {
@@ -28,15 +28,8 @@ function App() {
           <Route path="admin-login" element={<AdminLogin />} />
         </Route>
 
-        {/* Protected Routes - User Dashboard */}
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute requireAuth requireRole="user">
-              <div>User Dashboard</div>
-            </ProtectedRoute>
-          }
-        />
+        {/* User Dashboard Routes */}
+        <>{UserRoutes()}</>
 
         {/* Admin Routes */}
         <>{AdminRoutes()}</>

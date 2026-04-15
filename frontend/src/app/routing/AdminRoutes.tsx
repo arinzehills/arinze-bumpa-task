@@ -22,14 +22,14 @@ const adminSidebarLinks: SidebarLink[] = [
 
 export const AdminRoutes = () => (
   <>
-    <Route element={<AdminProtectedRoute />}>
+    <Route path="/admin/*" element={<AdminProtectedRoute />}>
       <Route
         element={
           <DashboardLayout sidebarLinks={adminSidebarLinks} isAdmin={true} />
         }
       >
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin/users" element={<UsersManagement />} />
+        <Route index element={<AdminDashboard />} />
+        <Route path="users" element={<UsersManagement />} />
       </Route>
     </Route>
   </>
