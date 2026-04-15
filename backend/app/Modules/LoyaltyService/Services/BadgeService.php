@@ -29,7 +29,7 @@ class BadgeService
         // Get the highest badge user qualifies for
         $badge = $this->badgeRepository->getBadgeForPoints($currentPoints);
 
-        if ($badge && $user->current_badge_id !== $badge->id) {
+        if ($badge && $user->current_badge_id != $badge->id) {
             // Assign new badge
             $this->userRepository->assignBadge($userId, $badge->id);
             $this->userRepository->update(['current_badge_name' => $badge->name], $userId);

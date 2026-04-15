@@ -37,7 +37,9 @@ class AchievementService
             }
 
             // Check if criteria met
-            if ($this->checkCriteria($userId, $achievement->criteria, $purchaseData)) {
+            $criteriaMet = $this->checkCriteria($userId, $achievement->criteria, $purchaseData);
+
+            if ($criteriaMet) {
                 // Unlock achievement
                 $this->userAchievementRepository->unlockAchievement($userId, $achievement->id);
 
@@ -61,8 +63,9 @@ class AchievementService
 
         switch ($type) {
             case 'first_purchase':
-                // Check if this is the first purchase
-                return $this->userAchievementRepository->getUserAchievements($userId)->count() === 0;
+                // Check if user has no achievements yet (this is their first)
+                $achievementCount = $this->userAchievementRepository->getUserAchievements($userId)->count();
+                return $achievementCount == 0;
 
             case 'purchase_count':
                 // Check total purchase count (you'd get this from PaymentService)
