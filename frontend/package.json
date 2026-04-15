@@ -18,7 +18,8 @@
     "formik": "^2.4.6",
     "yup": "^1.7.1",
     "react-toastify": "^11.0.5",
-    "lucide-react": "^0.525.0"
+    "lucide-react": "^0.525.0",
+    "@iconify/react": "^5.2.1"
   },
   "devDependencies": {
     "vite": "^6.2.0",
