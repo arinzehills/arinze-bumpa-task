@@ -17,6 +17,9 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->integer('total_points')->default(0);
+            $table->unsignedBigInteger('current_badge_id')->nullable();
+            $table->string('current_badge_name')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
