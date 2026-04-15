@@ -10,10 +10,21 @@ class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
 
+    // User Types
+    const TYPE_ADMIN = 'admin';
+    const TYPE_USER = 'user';
+    const TYPE_VENDOR = 'vendor';
+
+    // Roles
+    const ROLE_ADMIN = 'admin';
+    const ROLE_SUPER_ADMIN = 'super_admin';
+
     protected $fillable = [
         'name',
         'email',
         'password',
+        'user_type',
+        'role',
         'total_points',
         'current_badge_id',
         'current_badge_name',
