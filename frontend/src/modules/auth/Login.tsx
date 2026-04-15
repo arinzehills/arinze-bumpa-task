@@ -64,12 +64,7 @@ export const Login = () => {
         // Store auth data
         login(response.user, response.token);
 
-        // Redirect based on user type
-        if (response.user.user_type === "admin") {
-          navigate("/admin");
-        } else {
-          navigate("/dashboard");
-        }
+        navigate("/dashboard");
       }
     },
   });

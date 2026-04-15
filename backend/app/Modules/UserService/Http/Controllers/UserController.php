@@ -44,6 +44,27 @@ class UserController extends BaseController
     }
 
     /**
+     * Get all users (Admin)
+     * GET /api/admin/users?page=1&limit=10
+     */
+    public function getAllUsers(Request $request)
+    {
+        try {
+            $page = $request->query('page', 1);
+            $limit = $request->query('limit', 10);
+
+            $result = $this->userService->getAllUsersPaginated($page, $limit);
+            return $this->paginatedResponse(
+                $result['users'],
+                $result['pagination'],
+                'All users retrieved successfully'
+            );
+        } catch (\Exception $e) {
+            return $this->handleException($e);
+        }
+    }
+
+    /**
      * Get all users with achievements (Admin)
      * GET /api/admin/users/achievements?page=1&limit=10
      */

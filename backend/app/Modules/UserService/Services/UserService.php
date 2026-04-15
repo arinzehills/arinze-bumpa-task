@@ -67,12 +67,42 @@ class UserService
     }
 
     /**
+     * Get all users paginated (for admin)
+     */
+    public function getAllUsersPaginated($page = 1, $limit = 10)
+    {
+        $query = $this->userRepository->query()
+            ->with(['badge'])
+            ->where('user_type', '!=', 'admin') // Exclude admin users
+            ->orderBy('created_at', 'desc');
+
+        $total = $query->count();
+        $totalPages = ceil($total / $limit);
+        $offset = ($page - 1) * $limit;
+
+        $users = $query->offset($offset)
+            ->limit($limit)
+            ->get();
+
+        return [
+            'users' => $users,
+            'pagination' => [
+                'page' => (int)$page,
+                'limit' => (int)$limit,
+                'total' => $total,
+                'total_pages' => $totalPages,
+            ]
+        ];
+    }
+
+    /**
      * Get all users with their achievements paginated (for admin)
      */
     public function getAllUsersWithAchievementsPaginated($page = 1, $limit = 10)
     {
         $query = $this->userRepository->query()
             ->with(['achievements.achievement', 'badge'])
+            ->where('user_type', '!=', 'admin') // Exclude admin users
             ->orderBy('created_at', 'desc');
 
         $total = $query->count();

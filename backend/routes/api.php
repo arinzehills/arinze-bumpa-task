@@ -31,6 +31,7 @@ Route::prefix('v1')->group(function () {
 
     // Admin routes (protected)
     Route::middleware('admin')->prefix('admin')->group(function () {
+        Route::get('/users', [UserController::class, 'getAllUsers']);
         Route::get('/users/achievements', [UserController::class, 'getAllUsersAchievements']);
     });
 

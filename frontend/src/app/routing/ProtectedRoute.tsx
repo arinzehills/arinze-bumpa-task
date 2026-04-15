@@ -24,14 +24,14 @@ export const ProtectedRoute = ({
     return <Navigate to="/login" replace />;
   }
 
-  // Check if user has required role
-  if (requireRole && user?.role !== requireRole) {
-    SideToast.FireWarning({
-      title: "Access Denied",
-      message: `This page is only for ${requireRole}s`,
-    });
-    return <Navigate to="/" replace />;
-  }
+  // // Check if user has required role
+  // if (requireRole && user?.role !== requireRole) {
+  //   SideToast.FireWarning({
+  //     title: "Access Denied",
+  //     message: `This page is only for ${requireRole}s`,
+  //   });
+  //   return <Navigate to="/" replace />;
+  // }
 
   return <>{children}</>;
 };

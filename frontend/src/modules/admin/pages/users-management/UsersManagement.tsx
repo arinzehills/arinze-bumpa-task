@@ -14,7 +14,7 @@ export const UsersManagement = () => {
   const { data: usersResponse, isLoading, error } = useGet<
     PaginatedResponse<UserWithAchievements>
   >(
-    `/admin/users/achievements?page=${currentPage}&limit=${limit}`,
+    `/admin/users?page=${currentPage}&limit=${limit}`,
     { autoFetch: true, cacheDuration: 30 * 1000 }
   )
 
