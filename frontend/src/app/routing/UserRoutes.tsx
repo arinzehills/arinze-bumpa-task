@@ -5,6 +5,7 @@ import {
 } from "@components/layouts/DashboardLayout";
 import UserDashboard from "@modules/user-dashboard/UserDashboard";
 import { ProtectedRoute } from "./ProtectedRoute";
+import PartnersStoreList from "@modules/landing/components/PartnersStoreList";
 
 const userSidebarLinks: SidebarLink[] = [
   {
@@ -16,6 +17,11 @@ const userSidebarLinks: SidebarLink[] = [
     name: "Achievements",
     url: "/dashboard/achievements",
     icon: "ph:trophy",
+  },
+  {
+    name: "Partners",
+    url: "/dashboard/partners",
+    icon: "ph:store",
   },
   {
     name: "Profile",
@@ -33,10 +39,8 @@ export const UserRoutes = () => (
         }
       >
         <Route index element={<UserDashboard />} />
-        <Route
-          path="achievements"
-          element={<div>Achievements</div>}
-        />
+        <Route path="achievements" element={<div>Achievements</div>} />
+        <Route path="partners" element={<PartnersStoreList />} />
         <Route path="profile" element={<div>Profile</div>} />
       </Route>
     </Route>

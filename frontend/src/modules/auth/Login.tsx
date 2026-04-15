@@ -127,10 +127,10 @@ export const Login = () => {
         <p>
           Don't have an account?{" "}
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/register")}
             className="text-brand-primary hover:opacity-80 font-medium"
           >
-            Go back home
+            Sign up here
           </button>
         </p>
         <div className="pt-2 border-t border-border-color">

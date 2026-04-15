@@ -8,6 +8,7 @@ export interface SidebarLink {
   name: string;
   url: string;
   icon: string;
+  external?: boolean;
 }
 
 interface SidebarProps {

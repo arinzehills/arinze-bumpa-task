@@ -5,6 +5,7 @@ import { EcommerceStore } from '@modules/ecommerce/EcommerceStore'
 import ProductDetail from '@modules/ecommerce/pages/ProductDetail'
 import { AuthLayout } from '@app/layouts/AuthLayout'
 import { Login } from '@modules/auth/Login'
+import { Register } from '@modules/auth/Register'
 import { AdminLogin } from '@modules/auth/AdminLogin'
 import { AdminRoutes } from '@app/routing/AdminRoutes'
 import { UserRoutes } from '@app/routing/UserRoutes'
@@ -25,6 +26,7 @@ function App() {
         {/* Auth Routes */}
         <Route path="/" element={<AuthLayout />}>
           <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
           <Route path="admin-login" element={<AdminLogin />} />
         </Route>
 

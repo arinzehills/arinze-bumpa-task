@@ -1,51 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@components/Button";
-import { StoreCard } from "@components/StoreCard";
-
-const PARTNER_STORES = [
-  {
-    id: "1",
-    name: "Bumpa",
-    description: "Shop quality products and earn rewards",
-    icon: "mdi:store",
-    backgroundColor: "bg-bg-secondary",
-    iconColor: "text-text-primary",
-  },
-  {
-    id: "2",
-    name: "Jumia",
-    description: "Discover amazing deals and earn badges",
-    icon: "hugeicons:jumpers",
-    backgroundColor: "bg-text-primary",
-    iconColor: "text-white",
-  },
-  {
-    id: "3",
-    name: "Konga",
-    description: "Great products at competitive prices",
-    icon: "mdi:cart",
-    backgroundColor: "bg-bg-secondary",
-    iconColor: "text-text-primary",
-  },
-  {
-    id: "4",
-    name: "Aliexpress",
-    description: "Affordable products from around the world",
-    icon: "mdi:package-variant",
-    backgroundColor: "bg-text-primary",
-    iconColor: "text-white",
-  },
-];
 
 export const Landing = () => {
   const navigate = useNavigate();
 
   const handleLogin = () => {
     navigate("/login");
-  };
-
-  const handleStoreClick = (storeId: string) => {
-    navigate(`/ecommerce/store/${storeId}`);
   };
 
   return (
@@ -97,43 +57,6 @@ export const Landing = () => {
       </section>
 
       {/* Partner Stores Section */}
-      <section
-        id="stores"
-        className="bg-bg-secondary py-20 sm:py-32 border-t border-border-color"
-      >
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl sm:text-5xl font-bold text-text-primary mb-4">
-              Shop from Our Partners
-            </h2>
-            <p className="text-lg text-text-secondary max-w-2xl mx-auto">
-              Click on any store below to start shopping and earning rewards
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {PARTNER_STORES.map((store) => (
-              <StoreCard
-                key={store.id}
-                id={store.id}
-                name={store.name}
-                description={store.description}
-                icon={store.icon}
-                backgroundColor={store.backgroundColor}
-                iconColor={store.iconColor}
-                onClick={() => handleStoreClick(store.id)}
-              />
-            ))}
-          </div>
-
-          <div className="mt-16 text-center">
-            <p className="text-text-muted text-base">
-              More partner stores coming soon. Check back regularly for new
-              opportunities to earn rewards!
-            </p>
-          </div>
-        </div>
-      </section>
 
       {/* Footer */}
       <footer className="bg-bg-primary border-t border-border-color py-8">
