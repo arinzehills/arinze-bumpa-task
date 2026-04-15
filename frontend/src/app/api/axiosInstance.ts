@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { useAuthStore } from '@app/stores/useAuthStore'
+import { useAuthStore } from '@modules/auth/stores/useAuthStore'
 import { ENV } from '@app/config/env'
 
 export const axiosInstance = axios.create({
@@ -42,8 +42,8 @@ axiosInstance.interceptors.response.use(
           refresh_token: refreshToken,
         })
 
-        const { access_token, refresh_token } = response.data
-        useAuthStore.getState().setToken(access_token, refresh_token)
+        const { token } = response.data
+        useAuthStore.getState().setToken(token)
 
         // Retry original request with new token
         originalRequest.headers.Authorization = `Bearer ${access_token}`

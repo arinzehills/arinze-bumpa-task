@@ -18,7 +18,7 @@ class ProductSeeder extends Seeder
             'price' => 79.99,
             'sku' => 'WH-001',
             'stock' => 50,
-            'image_url' => 'https://via.placeholder.com/400x300?text=Wireless+Headphones'
+            'image_url' => 'https://picsum.photos/400/300?random=1'
         ]);
 
         Product::create([
@@ -27,7 +27,7 @@ class ProductSeeder extends Seeder
             'price' => 15.99,
             'sku' => 'UC-001',
             'stock' => 100,
-            'image_url' => 'https://via.placeholder.com/400x300?text=USB-C+Cable'
+            'image_url' => 'https://picsum.photos/400/300?random=2'
         ]);
 
         Product::create([
@@ -36,7 +36,7 @@ class ProductSeeder extends Seeder
             'price' => 24.99,
             'sku' => 'PS-001',
             'stock' => 75,
-            'image_url' => 'https://via.placeholder.com/400x300?text=Phone+Stand'
+            'image_url' => 'https://picsum.photos/400/300?random=3'
         ]);
 
         Product::create([
@@ -45,7 +45,7 @@ class ProductSeeder extends Seeder
             'price' => 12.99,
             'sku' => 'SP-001',
             'stock' => 200,
-            'image_url' => 'https://via.placeholder.com/400x300?text=Screen+Protector'
+            'image_url' => 'https://picsum.photos/400/300?random=4'
         ]);
 
         Product::create([
@@ -54,7 +54,7 @@ class ProductSeeder extends Seeder
             'price' => 19.99,
             'sku' => 'PC-001',
             'stock' => 150,
-            'image_url' => 'https://via.placeholder.com/400x300?text=Phone+Case'
+            'image_url' => 'https://picsum.photos/400/300?random=5'
         ]);
 
         Product::create([
@@ -63,7 +63,7 @@ class ProductSeeder extends Seeder
             'price' => 49.99,
             'sku' => 'PB-001',
             'stock' => 60,
-            'image_url' => 'https://via.placeholder.com/400x300?text=Portable+Charger'
+            'image_url' => 'https://picsum.photos/400/300?random=6'
         ]);
     }
 }

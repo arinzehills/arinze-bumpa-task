@@ -4,8 +4,6 @@ import { usePost } from '@app/hooks/usePost'
 import FadeAnimation from '@components/Animations/FadeAnimation'
 import { Loader } from '@components/Loader'
 import { Button } from '@components/Button'
-import { Toast } from '@components/Toast'
-import { useState } from 'react'
 import { Product } from '../components/ProductItem'
 
 interface ProductResponse {
@@ -30,10 +28,6 @@ interface PaymentResponse {
 const ProductDetail = () => {
   const { productId } = useParams<{ productId: string }>()
   const navigate = useNavigate()
-  const [toastMessage, setToastMessage] = useState<{
-    message: string
-    type: 'success' | 'error'
-  } | null>(null)
 
   // Fetch product details
   const { data: productResponse, isLoading: isLoadingProduct, error } = useGet<ProductResponse>(
@@ -43,40 +37,20 @@ const ProductDetail = () => {
 
   const product = productResponse?.data
 
-  // Payment mutation
-  const { execute: processPayment, isLoading: isProcessing } = usePost<PaymentResponse>(
-    '/payments'
-  )
+  // Payment mutation - hook handles toasts automatically
+  const { execute: executePayment, isLoading: isProcessing } = usePost<PaymentResponse>()
 
   const handleBuyNow = async () => {
     if (!product) return
 
-    try {
-      const response = await processPayment({
-        product_id: product.id
-      })
+    const response = await executePayment(
+      '/payments',
+      { product_id: product.id },
+      { canToastSuccess: true, canToastError: true }
+    )
 
-      if (response?.success) {
-        setToastMessage({
-          message: `🎉 Purchase successful! You earned ${response.data.cashback_points} loyalty points!`,
-          type: 'success'
-        })
-
-        // Redirect to products after 2 seconds
-        setTimeout(() => {
-          navigate(-1)
-        }, 2000)
-      } else {
-        setToastMessage({
-          message: 'Payment failed. Please try again.',
-          type: 'error'
-        })
-      }
-    } catch (err) {
-      setToastMessage({
-        message: err instanceof Error ? err.message : 'Payment failed',
-        type: 'error'
-      })
+    if (response?.success) {
+      setTimeout(() => navigate(-1), 2000)
     }
   }
 
@@ -167,7 +141,7 @@ const ProductDetail = () => {
                 </p>
               </div>
 
-              {/* Features */}
+              {/* Loyalty Rewards Info */}
               <div className="mb-8 p-4 bg-blue-50 rounded-lg">
                 <p className="text-sm font-semibold text-blue-900 mb-2">
                   🎁 Loyalty Rewards
@@ -181,30 +155,16 @@ const ProductDetail = () => {
               <Button
                 onClick={handleBuyNow}
                 disabled={!isInStock || isProcessing}
-                variant={isInStock ? 'primary' : 'secondary'}
-                className="w-full"
+                variant="black"
+                size="lg"
+                fullWidth
               >
-                {isProcessing && (
-                  <span className="flex items-center justify-center">
-                    <Loader /> Processing...
-                  </span>
-                )}
-                {!isProcessing && isInStock && 'Buy Now'}
-                {!isInStock && 'Out of Stock'}
+                {isProcessing ? 'Processing...' : isInStock ? 'Buy Now' : 'Out of Stock'}
               </Button>
             </div>
           </div>
         </FadeAnimation>
       </main>
-
-      {/* Toast Notification */}
-      {toastMessage && (
-        <Toast
-          message={toastMessage.message}
-          type={toastMessage.type}
-          onClose={() => setToastMessage(null)}
-        />
-      )}
     </div>
   )
 }

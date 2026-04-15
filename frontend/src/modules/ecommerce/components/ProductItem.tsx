@@ -1,5 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { Icon } from '@iconify/react'
+import { Button } from '@components/Button'
 
 export interface Product {
   id: number
@@ -55,18 +57,33 @@ const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
           </span>
         </div>
 
-        {/* View Details Button */}
-        <Link
-          to={`/ecommerce/products/${product.id}`}
-          className={`w-full py-2 rounded-lg font-medium text-center transition-colors duration-200 ${
-            isInStock
-              ? 'bg-blue-600 text-white hover:bg-blue-700'
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-          }`}
-          onClick={(e) => !isInStock && e.preventDefault()}
-        >
-          {isInStock ? 'View Details' : 'Out of Stock'}
-        </Link>
+        {/* Action Buttons */}
+        {isInStock ? (
+          <div className="flex flex-col gap-2">
+            {/* Buy Now Button */}
+            <Link to={`/ecommerce/checkout/${product.id}`} className="w-full">
+              <Button
+                fullWidth
+                size="md"
+                variant="black"
+                rightIcon={<Icon icon="ep:top-right" width={18} height={18} />}
+              >
+                Buy Now
+              </Button>
+            </Link>
+
+            {/* View Details Button */}
+            <Link to={`/ecommerce/products/${product.id}`} className="w-full">
+              <Button fullWidth size="md" variant="secondary">
+                View Details
+              </Button>
+            </Link>
+          </div>
+        ) : (
+          <Button fullWidth size="md" variant="black" disabled>
+            Out of Stock
+          </Button>
+        )}
       </div>
     </div>
   )

@@ -3,7 +3,7 @@ import { Loader } from './Loader'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean
-  variant?: 'primary' | 'secondary' | 'danger'
+  variant?: 'primary' | 'secondary' | 'danger' | 'black'
   size?: 'sm' | 'md' | 'lg'
   fullWidth?: boolean
   leftIcon?: React.ReactNode
@@ -33,6 +33,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       primary: 'btn-primary bg-brand-secondary hover:opacity-90',
       secondary: 'btn-secondary bg-bg-secondary hover:bg-bg-elevated border border-border-color',
       danger: 'px-6 py-3 bg-error text-white rounded-lg hover:bg-opacity-90',
+      black: 'bg-black text-white hover:bg-gray-900 active:bg-gray-950',
     }
 
     const sizeStyles = {

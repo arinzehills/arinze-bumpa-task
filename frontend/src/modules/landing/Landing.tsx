@@ -45,7 +45,7 @@ export const Landing = () => {
   };
 
   const handleStoreClick = (storeId: string) => {
-    navigate(`/e-commerce-store/${storeId}`);
+    navigate(`/ecommerce/store/${storeId}`);
   };
 
   return (
