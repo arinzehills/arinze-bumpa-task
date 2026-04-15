@@ -32,4 +32,30 @@ class BadgeRepository extends BaseRepository
             ->orderBy('points_threshold', 'asc')
             ->get();
     }
+
+    /**
+     * Get badges paginated
+     */
+    public function getBadgesPaginated($page = 1, $limit = 10)
+    {
+        $query = $this->query()->orderBy('points_threshold', 'asc');
+
+        $total = $query->count();
+        $totalPages = ceil($total / $limit);
+        $offset = ($page - 1) * $limit;
+
+        $badges = $query->offset($offset)
+            ->limit($limit)
+            ->get();
+
+        return [
+            'badges' => $badges,
+            'pagination' => [
+                'page' => (int)$page,
+                'limit' => (int)$limit,
+                'total' => $total,
+                'total_pages' => $totalPages,
+            ]
+        ];
+    }
 }

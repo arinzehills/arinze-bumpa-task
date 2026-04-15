@@ -20,14 +20,14 @@ class LoyaltyTest extends TestCase
         Achievement::create([
             'name' => 'First Purchase',
             'description' => 'Made your first purchase',
-            'criteria' => json_encode(['type' => 'first_purchase', 'value' => 1]),
+            'criteria' => ['type' => 'first_purchase', 'value' => 1],
             'points' => 50
         ]);
 
         Achievement::create([
             'name' => 'Big Spender',
             'description' => 'Spent over $100',
-            'criteria' => json_encode(['type' => 'total_spent', 'value' => 100]),
+            'criteria' => ['type' => 'total_spent', 'value' => 100],
             'points' => 200
         ]);
 
@@ -38,7 +38,7 @@ class LoyaltyTest extends TestCase
                 'success' => true,
                 'message' => 'Achievements retrieved successfully'
             ])
-            ->assertJsonCount(2, 'data');
+            ->assertJsonCount(2, 'data.items');
     }
 
     /**
@@ -72,6 +72,6 @@ class LoyaltyTest extends TestCase
                 'success' => true,
                 'message' => 'Badges retrieved successfully'
             ])
-            ->assertJsonCount(3, 'data');
+            ->assertJsonCount(3, 'data.items');
     }
 }

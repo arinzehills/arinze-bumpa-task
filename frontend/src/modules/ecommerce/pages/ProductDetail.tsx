@@ -6,22 +6,12 @@ import { Loader } from '@components/Loader'
 import { Button } from '@components/Button'
 import { Product } from '../components/ProductItem'
 
-interface ProductResponse {
-  success: boolean
-  message: string
-  data: Product
-}
-
 interface PaymentResponse {
-  success: boolean
-  message: string
-  data: {
-    cashback_points: number
-    payment: {
-      id: number
-      status: string
-      transaction_id: string
-    }
+  cashback_points: number
+  payment: {
+    id: number
+    status: string
+    transaction_id: string
   }
 }
 
@@ -30,12 +20,10 @@ const ProductDetail = () => {
   const navigate = useNavigate()
 
   // Fetch product details
-  const { data: productResponse, isLoading: isLoadingProduct, error } = useGet<ProductResponse>(
+  const { data: product, isLoading: isLoadingProduct, error } = useGet<Product>(
     `/products/${productId}`,
     { autoFetch: true }
   )
-
-  const product = productResponse?.data
 
   // Payment mutation - hook handles toasts automatically
   const { execute: executePayment, isLoading: isProcessing } = usePost<PaymentResponse>()
@@ -49,7 +37,7 @@ const ProductDetail = () => {
       { canToastSuccess: true, canToastError: true }
     )
 
-    if (response?.success) {
+    if (response) {
       setTimeout(() => navigate(-1), 2000)
     }
   }

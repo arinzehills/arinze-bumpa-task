@@ -6,18 +6,13 @@ import FadeAnimation from "@components/Animations/FadeAnimation";
 import { Loader } from "@components/Loader";
 import ProductItem, { Product } from "./components/ProductItem";
 import { motion } from "framer-motion";
+import type { PaginatedResponse } from "@app/api/types/paginationResponse";
 
 const STORE_DETAILS: Record<string, { name: string; description: string }> = {
   "1": { name: "Bumpa", description: "Quality products for everyday needs" },
   "2": { name: "Jumia", description: "Everything you need in one place" },
   "3": { name: "Konga", description: "Best deals and authentic products" },
 };
-
-interface ProductsResponse {
-  success: boolean;
-  message: string;
-  data: Product[];
-}
 
 export const EcommerceStore = () => {
   const { storeId } = useParams<{ storeId: string }>();
@@ -26,12 +21,12 @@ export const EcommerceStore = () => {
   const [hideRedirect, setHideRedirect] = useState(false);
 
   // Fetch products using useGet hook
-  const { data: productsResponse, isLoading, error } = useGet<ProductsResponse>(
+  const { data: productsResponse, isLoading, error } = useGet<PaginatedResponse<Product>>(
     "/products",
     { autoFetch: true, cacheDuration: 5 * 60 * 1000 }
   );
 
-  const products = productsResponse?.data || [];
+  const products = productsResponse?.items || [];
 
   // Auto-hide redirect message after 1.5 seconds
   useEffect(() => {

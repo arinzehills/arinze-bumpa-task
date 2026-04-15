@@ -7,6 +7,8 @@ import { AuthLayout } from '@app/layouts/AuthLayout'
 import { Login } from '@modules/auth/Login'
 import { AdminLogin } from '@modules/auth/AdminLogin'
 import { ProtectedRoute } from '@app/routing/ProtectedRoute'
+import { AdminRoutes } from '@app/routing/AdminRoutes'
+import Unauthorized from '@components/Unauthorized'
 
 function App() {
   return (
@@ -26,7 +28,7 @@ function App() {
           <Route path="admin-login" element={<AdminLogin />} />
         </Route>
 
-        {/* Protected Routes - User Dashboard (coming soon) */}
+        {/* Protected Routes - User Dashboard */}
         <Route
           path="/dashboard"
           element={
@@ -36,15 +38,11 @@ function App() {
           }
         />
 
-        {/* Protected Routes - Admin Dashboard (coming soon) */}
-        <Route
-          path="/admin/dashboard"
-          element={
-            <ProtectedRoute requireAuth requireRole="admin">
-              <div>Admin Dashboard</div>
-            </ProtectedRoute>
-          }
-        />
+        {/* Admin Routes */}
+        <>{AdminRoutes()}</>
+
+        {/* Unauthorized Page */}
+        <Route path="/unauthorized" element={<Unauthorized />} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" />} />

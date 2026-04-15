@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { axiosInstance } from '@app/api/axiosInstance'
 import { SideToast } from '@components/Toast'
 import { AxiosRequestConfig } from 'axios'
+import { ApiResponse } from '@app/api/types/apiResponse'
 
 interface UsePostOptions {
   isMultipart?: boolean
@@ -37,15 +38,15 @@ export function usePost<T = unknown>() {
         },
       }
 
-      const response = await axiosInstance.post<T>(endpoint, body, config)
-      const responseData = response.data
+      const response = await axiosInstance.post<ApiResponse<T>>(endpoint, body, config)
+      const responseData = response.data.data
 
       setData(responseData)
 
       if (canToastSuccess) {
         SideToast.FireSuccess({
           title: 'Success',
-          message: 'Operation completed successfully',
+          message: response.data.message || 'Operation completed successfully',
         })
       }
 

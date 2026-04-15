@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { axiosInstance } from '@app/api/axiosInstance'
 import { AxiosRequestConfig } from 'axios'
+import { ApiResponse } from '@app/api/types/apiResponse'
 
 interface UseGetOptions {
   autoFetch?: boolean
@@ -40,8 +41,8 @@ export function useGet<T = unknown>(
       setIsLoading(true)
       setError(null)
 
-      const response = await axiosInstance.get<T>(endpoint, customOptions)
-      const responseData = response.data
+      const response = await axiosInstance.get<ApiResponse<T>>(endpoint, customOptions)
+      const responseData = response.data.data
 
       // Update cache
       cache[endpoint] = {
