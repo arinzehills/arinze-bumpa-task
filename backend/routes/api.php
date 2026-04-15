@@ -5,6 +5,7 @@ use App\Modules\UserService\Http\Controllers\UserController;
 use App\Modules\UserService\Http\Controllers\AuthController;
 use App\Modules\LoyaltyService\Http\Controllers\LoyaltyController;
 use App\Modules\ECommerceProductService\Http\Controllers\ProductController;
+use App\Modules\PaymentService\Http\Controllers\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +38,13 @@ Route::prefix('v1')->group(function () {
     Route::prefix('products')->group(function () {
         Route::get('/', [ProductController::class, 'index']);
         Route::get('/{product}', [ProductController::class, 'show']);
+    });
+
+    // Payment routes (protected)
+    Route::middleware('auth:api')->prefix('payments')->group(function () {
+        Route::post('/', [PaymentController::class, 'processPayment']);
+        Route::get('/history', [PaymentController::class, 'getUserPaymentHistory']);
+        Route::get('/total-spending', [PaymentController::class, 'getUserTotalSpending']);
     });
 
     // Loyalty routes

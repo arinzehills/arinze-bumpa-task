@@ -6,6 +6,8 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
+use App\Modules\PaymentService\Events\PurchaseCompleted;
+use App\Modules\LoyaltyService\Listeners\AwardAchievementsOnPurchase;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -17,6 +19,9 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
+        ],
+        PurchaseCompleted::class => [
+            AwardAchievementsOnPurchase::class,
         ],
     ];
 
