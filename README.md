@@ -188,12 +188,53 @@ QUEUE_CONNECTION=rabbitmq
 VITE_API_URL=http://localhost:8000/api
 ```
 
-## Services
+## Running with Docker
+
+**Start all services:**
+```bash
+docker-compose up --build
+```
+
+**After startup (services are auto-running):**
+- Frontend automatically starts: http://localhost:5173
+- Backend API automatically starts: http://localhost:8000
+- Database migrations run automatically on first startup
+- Seeders populate test data automatically
+
+**Manual Database Operations:**
+
+Run migrations:
+```bash
+docker-compose exec backend php artisan migrate:fresh --seed
+```
+
+Seed database only:
+```bash
+docker-compose exec backend php artisan db:seed
+```
+
+Generate Swagger docs:
+```bash
+docker-compose exec backend php artisan swagger:generate
+```
+
+Run tests:
+```bash
+docker-compose exec backend php artisan test
+```
+
+**View Logs:**
+```bash
+docker-compose logs -f backend    # Backend logs
+docker-compose logs -f frontend   # Frontend logs
+```
+
+## Services After Docker Startup
 
 - **Frontend:** http://localhost:5173 (React dev server with HMR)
 - **Backend:** http://localhost:8000 (Laravel API)
-- **Database Admin:** http://localhost:8080 (phpMyAdmin)
-- **Queue Admin:** http://localhost:15672 (RabbitMQ, guest/guest)
+- **Database Admin:** http://localhost:8080 (phpMyAdmin - root/secret)
+- **Queue Admin:** http://localhost:15672 (RabbitMQ - guest/guest)
 - **API Docs:** http://localhost:8000/api/documentation (Swagger)
  ync on dashboard load
 
