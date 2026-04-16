@@ -1,97 +1,82 @@
+import { useEffect, useState } from "react";
 import { useAuthStore } from "@app/stores/useAuthStore";
 import WelcomeSetion from "./components/WelcomeSetion";
 import { HowItWorks } from "./components/HowItWorks";
 import WalletSection from "./components/WalletSection";
 import BadgesShowcase from "./components/BadgesShowcase";
+import { UnlockCelebration } from "@components/UnlockCelebration";
+import confetti from "canvas-confetti";
 
 export const UserDashboard = () => {
   const { user } = useAuthStore();
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [unlockedItems, setUnlockedItems] = useState<any[]>([]);
+
+  // Check for newly unlocked items on mount
+  useEffect(() => {
+    const newlyUnlocked = localStorage.getItem("newlyUnlocked");
+    if (newlyUnlocked) {
+      try {
+        const items = JSON.parse(newlyUnlocked);
+        if (items.length > 0) {
+          setUnlockedItems(items);
+          setShowCelebration(true);
+          // Clear from localStorage
+          localStorage.removeItem("newlyUnlocked");
+          // Trigger confetti
+          setTimeout(() => {
+            confetti({
+              particleCount: 150,
+              spread: 100,
+              origin: { y: 0.5 },
+            });
+          }, 500);
+        }
+      } catch (e) {
+        console.error("Failed to parse unlocked items", e);
+      }
+    }
+  }, []);
 
   return (
-    <div className="space-y-8">
-      {/* Welcome Section */}
-      <WelcomeSetion />
+    <>
+      <UnlockCelebration
+        isOpen={showCelebration}
+        items={unlockedItems}
+        onClose={() => setShowCelebration(false)}
+        showConfetti={false}
+      />
+      <div className="space-y-8">
+        {/* Welcome Section */}
+        <WelcomeSetion />
 
-      {/* How It Works & Wallet Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-stretch">
-        <div className="lg:col-span-2 h-full">
-          <HowItWorks />
-        </div>
-        <div className="lg:col-span-3 h-full">
-          <WalletSection />
-        </div>
-      </div>
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Total Points Card */}
-        <div className="bg-brand-primary text-white p-8 rounded-lg shadow-lg">
-          <p className="text-white/80 text-sm font-medium mb-2">Total Points</p>
-          <p className="text-5xl font-bold">{user?.total_points || 0}</p>
-          <p className="text-white/60 text-sm mt-4">
-            Keep shopping to earn more points
-          </p>
+        {/* How It Works & Wallet Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-stretch">
+          <div className="lg:col-span-2 h-full">
+            <HowItWorks />
+          </div>
+          <div className="lg:col-span-3 h-full">
+            <WalletSection />
+          </div>
         </div>
 
-        {/* Current Badge Card */}
-        <div className="bg-bg-secondary p-8 rounded-lg border border-border-color">
-          <p className="text-text-muted text-sm font-medium mb-4">
-            Current Badge
-          </p>
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-brand-primary/10 flex items-center justify-center">
-              <span className="text-3xl">🏆</span>
-            </div>
-            <div>
-              <p className="text-lg font-bold text-text-primary">
-                {user?.current_badge_name || "No badge yet"}
-              </p>
-              <p className="text-sm text-text-secondary">
-                {user?.current_badge_name
-                  ? "Keep earning to unlock the next badge"
-                  : "Complete your first purchase to earn a badge"}
-              </p>
-            </div>
+        {/* Badges Showcase Section */}
+        <BadgesShowcase />
+
+        {/* Recent Activity Section */}
+        <div className="bg-bg-secondary p-6 rounded-lg border border-border-color">
+          <h2 className="text-xl font-bold text-text-primary mb-4">
+            Recent Activity
+          </h2>
+          <div className="text-center py-12">
+            <p className="text-text-secondary">No recent activity yet</p>
+            <p className="text-sm text-text-muted mt-2">
+              Your purchases and achievements will appear here
+            </p>
           </div>
         </div>
       </div>
-
-      {/* How It Works Section */}
-
-      {/* Badges Showcase Section */}
-      <BadgesShowcase />
-
-      {/* Recent Activity Section */}
-      <div className="bg-bg-secondary p-6 rounded-lg border border-border-color">
-        <h2 className="text-xl font-bold text-text-primary mb-4">
-          Recent Activity
-        </h2>
-        <div className="text-center py-12">
-          <p className="text-text-secondary">No recent activity yet</p>
-          <p className="text-sm text-text-muted mt-2">
-            Your purchases and achievements will appear here
-          </p>
-        </div>
-      </div>
-
-      {/* Achievements Section */}
-      <div className="bg-bg-secondary p-6 rounded-lg border border-border-color">
-        <h2 className="text-xl font-bold text-text-primary mb-4">
-          Achievements
-        </h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {/* Placeholder achievement cards */}
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div
-              key={i}
-              className="bg-bg-elevated p-4 rounded-lg text-center border border-border-color/50"
-            >
-              <div className="text-3xl mb-2">🎯</div>
-              <p className="text-xs text-text-muted">Achievement {i}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+    </>
   );
 };
 

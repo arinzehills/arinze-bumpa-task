@@ -2,6 +2,9 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { Icon } from '@iconify/react'
 import { Button } from '@components/Button'
+import ConfirmModal from '@components/AnimatedModal/ConfirmModal'
+import { UnlockCelebration } from '@components/UnlockCelebration'
+import { usePurchase } from '../hooks/usePurchase'
 
 export interface Product {
   id: number
@@ -21,8 +24,36 @@ interface ProductItemProps {
 
 const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
   const isInStock = product.stock > 0
+  const {
+    showConfirm,
+    setShowConfirm,
+    showCelebration,
+    setShowCelebration,
+    unlockedItems,
+    isProcessing,
+    handleBuyNow,
+  } = usePurchase()
 
   return (
+    <>
+      <UnlockCelebration
+        isOpen={showCelebration}
+        items={unlockedItems}
+        onClose={() => setShowCelebration(false)}
+        showConfetti={true}
+      />
+
+      <ConfirmModal
+        openModal={showConfirm}
+        setOpenModal={setShowConfirm}
+        onConfirm={() => handleBuyNow(product.id)}
+        loading={isProcessing}
+        type="warning"
+        title="Confirm Purchase"
+        message={`Are you sure you want to purchase ${product.name}?`}
+        confirmText="Yes, Buy Now"
+        cancelText="Cancel"
+      />
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
       {/* Product Image */}
       <div className="aspect-square overflow-hidden bg-gray-200">
@@ -61,16 +92,16 @@ const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
         {isInStock ? (
           <div className="flex flex-col gap-2">
             {/* Buy Now Button */}
-            <Link to={`/ecommerce/checkout/${product.id}`} className="w-full">
-              <Button
-                fullWidth
-                size="md"
-                variant="black"
-                rightIcon={<Icon icon="ep:top-right" width={18} height={18} />}
-              >
-                Buy Now
-              </Button>
-            </Link>
+            <Button
+              onClick={() => setShowConfirm(true)}
+              fullWidth
+              size="md"
+              variant="black"
+              rightIcon={<Icon icon="ep:top-right" width={18} height={18} />}
+              disabled={isProcessing}
+            >
+              Buy Now
+            </Button>
 
             {/* View Details Button */}
             <Link to={`/ecommerce/products/${product.id}`} className="w-full">
@@ -86,6 +117,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
         )}
       </div>
     </div>
+    </>
   )
 }
 

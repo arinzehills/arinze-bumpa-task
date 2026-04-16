@@ -4,6 +4,7 @@ import {
   type SidebarLink,
 } from "@components/layouts/DashboardLayout";
 import UserDashboard from "@modules/user-dashboard/UserDashboard";
+import AchievementsPage from "@modules/user-dashboard/pages/Achievements";
 import Profile from "@modules/user-dashboard/pages/Profile";
 import { ProtectedRoute } from "./ProtectedRoute";
 import PartnersStoreList from "@modules/landing/components/PartnersStoreList";
@@ -40,7 +41,7 @@ export const UserRoutes = () => (
         }
       >
         <Route index element={<UserDashboard />} />
-        <Route path="achievements" element={<div>Achievements</div>} />
+        <Route path="achievements" element={<AchievementsPage />} />
         <Route path="partners" element={<PartnersStoreList />} />
         <Route path="profile" element={<Profile />} />
       </Route>
