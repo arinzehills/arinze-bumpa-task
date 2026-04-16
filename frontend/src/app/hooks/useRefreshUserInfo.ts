@@ -1,20 +1,12 @@
 import { useEffect } from "react";
-import { useAuthStore } from "@app/stores/useAuthStore";
+import { useAuthStore, User } from "@app/stores/useAuthStore";
 import { useGet } from "./useGet";
-
-interface User {
-  id: string;
-  email: string;
-  name: string;
-  total_points?: number;
-  current_badge_id?: string | null;
-  current_badge_name?: string | null;
-}
 
 export const useRefreshUserInfo = () => {
   const { setUser } = useAuthStore();
-  const { data: userData, isLoading } = useGet<User>("/auth/me", {
-    autoFetch: true
+  const { data: userData, isLoading, refetch } = useGet<User>("/auth/me", {
+    autoFetch: true,
+    cacheDuration: 0  // Disable cache to always fetch fresh data
   });
 
   // Automatically update user store when data fetches
@@ -24,5 +16,5 @@ export const useRefreshUserInfo = () => {
     }
   }, [userData, setUser]);
 
-  return { isLoading };
+  return { isLoading, refetch };
 };

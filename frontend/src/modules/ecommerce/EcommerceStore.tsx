@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@components/Button";
+import { AuthButtons } from "@components/AuthButtons";
 import { useGet } from "@app/hooks/useGet";
 import FadeAnimation from "@components/Animations/FadeAnimation";
 import { Loader } from "@components/Loader";
 import ProductItem, { Product } from "./components/ProductItem";
 import { motion } from "framer-motion";
 import type { PaginatedResponse } from "@app/api/types/paginationResponse";
-import { useAuthStore } from "@app/stores/useAuthStore";
 
 const STORE_DETAILS: Record<string, { name: string; description: string }> = {
   "1": { name: "Bumpa", description: "Quality products for everyday needs" },
@@ -59,15 +59,15 @@ export const EcommerceStore = () => {
   return (
     <div className="min-h-screen bg-bg-primary">
       <header className="bg-bg-secondary border-b border-border-color p-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           <button
             onClick={() => navigate("/")}
-            className="text-brand-secondary hover:underline font-medium"
+            className="text-brand-secondary hover:underline font-medium text-sm sm:text-base whitespace-nowrap"
           >
             ← Back to home
           </button>
-          <h1 className="text-2xl font-bold text-text-primary">{store.name}</h1>
-          <div />
+          <h1 className="text-lg sm:text-2xl font-bold text-text-primary truncate">{store.name}</h1>
+          <AuthButtons primarySize="sm" gap="gap-2 sm:gap-3" hideLogoutText={true} />
         </div>
       </header>
 
