@@ -1,4 +1,14 @@
 import '@testing-library/jest-dom'
+import { TextEncoder, TextDecoder } from 'util'
+
+declare global {
+  var TextEncoder: typeof import('util').TextEncoder
+  var TextDecoder: typeof import('util').TextDecoder
+}
+
+// Polyfill for TextEncoder/TextDecoder (needed for React Router)
+globalThis.TextEncoder = TextEncoder
+globalThis.TextDecoder = TextDecoder as any
 
 // Mock localStorage
 const localStorageMock = {
@@ -8,4 +18,4 @@ const localStorageMock = {
   clear: jest.fn(),
 }
 
-global.localStorage = localStorageMock as any
+globalThis.localStorage = localStorageMock as any

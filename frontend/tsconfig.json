@@ -4,7 +4,8 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
-    "types": ["vite/client"],
+    "esModuleInterop": true,
+    "types": ["vite/client", "node", "jest", "@testing-library/jest-dom"],
     "baseUrl": ".",
     "paths": {
       "@app/*": ["src/app/*"],
