@@ -18,9 +18,12 @@ import { AdminRoutes } from "@app/routing/AdminRoutes";
 import { UserRoutes } from "@app/routing/UserRoutes";
 import Unauthorized from "@components/Unauthorized";
 import { usePaymentVerification } from "@app/hooks/usePaymentVerification";
+import { useCelebrationStore } from "@app/stores/useCelebrationStore";
+import ErrorBoundary from "@components/ErrorBoundary";
 
 function AppContent() {
   const { isVerifying } = usePaymentVerification();
+  const { isOpen, items, close } = useCelebrationStore();
 
   return (
     <>
@@ -36,8 +39,13 @@ function AppContent() {
         </div>
       )}
 
-      {/* Celebration modal (managed by store) */}
-      <UnlockCelebration />
+      {/* Celebration modal (read from store, pass as props) */}
+      <UnlockCelebration
+        isOpen={isOpen}
+        items={items}
+        onClose={close}
+        showConfetti={true}
+      />
 
       <Routes>
         {/* Landing Page */}
@@ -75,10 +83,12 @@ function AppContent() {
 
 function App() {
   return (
-    <Router>
-      <Toast />
-      <AppContent />
-    </Router>
+    <ErrorBoundary>
+      <Router>
+        <Toast />
+        <AppContent />
+      </Router>
+    </ErrorBoundary>
   );
 }
 

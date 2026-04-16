@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useGet } from './useGet'
 import { useCelebrationStore } from '@app/stores/useCelebrationStore'
 
@@ -17,6 +17,7 @@ interface VerifyPaymentResponse {
 
 export const usePaymentVerification = () => {
   const [reference, setReference] = useState<string | null>(null)
+  const hasOpenedRef = useRef(false)
   const { open: openCelebration } = useCelebrationStore()
 
   // Detect reference in URL on mount
@@ -45,7 +46,9 @@ export const usePaymentVerification = () => {
 
   // Open celebration modal and store unlocked items in localStorage after verification completes
   useEffect(() => {
-    if (!isLoading && reference && verifyResponse) {
+    if (!isLoading && reference && verifyResponse && !hasOpenedRef.current) {
+      hasOpenedRef.current = true
+
       // Open celebration modal
       openCelebration(unlockedItems.length > 0 ? unlockedItems : [])
 
@@ -57,7 +60,7 @@ export const usePaymentVerification = () => {
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname)
     }
-  }, [isLoading, reference, verifyResponse, unlockedItems])
+  }, [isLoading, reference, verifyResponse])
 
   return {
     isVerifying: isLoading && reference !== null,

@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { Icon } from '@iconify/react'
 import { Button } from '@components/Button'
 import ConfirmModal from '@components/AnimatedModal/ConfirmModal'
-import { UnlockCelebration } from '@components/UnlockCelebration'
 import { usePurchase } from '../hooks/usePurchase'
 
 export interface Product {
@@ -27,22 +26,12 @@ const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
   const {
     showConfirm,
     setShowConfirm,
-    showCelebration,
-    setShowCelebration,
-    unlockedItems,
     isProcessing,
     handleBuyNow,
   } = usePurchase()
 
   return (
     <>
-      <UnlockCelebration
-        isOpen={showCelebration}
-        items={unlockedItems}
-        onClose={() => setShowCelebration(false)}
-        showConfetti={true}
-      />
-
       <ConfirmModal
         openModal={showConfirm}
         setOpenModal={setShowConfirm}
