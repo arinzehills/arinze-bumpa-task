@@ -4,6 +4,7 @@ import WelcomeSetion from "./components/WelcomeSetion";
 import { HowItWorks } from "./components/HowItWorks";
 import WalletSection from "./components/WalletSection";
 import BadgesShowcase from "./components/BadgesShowcase";
+import { RecentActivity } from "./components/RecentActivity";
 import { UnlockCelebration } from "@components/UnlockCelebration";
 import confetti from "canvas-confetti";
 
@@ -64,17 +65,7 @@ export const UserDashboard = () => {
         <BadgesShowcase />
 
         {/* Recent Activity Section */}
-        <div className="bg-bg-secondary p-6 rounded-lg border border-border-color">
-          <h2 className="text-xl font-bold text-text-primary mb-4">
-            Recent Activity
-          </h2>
-          <div className="text-center py-12">
-            <p className="text-text-secondary">No recent activity yet</p>
-            <p className="text-sm text-text-muted mt-2">
-              Your purchases and achievements will appear here
-            </p>
-          </div>
-        </div>
+        <RecentActivity />
       </div>
     </>
   );
