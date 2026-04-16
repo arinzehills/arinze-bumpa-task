@@ -216,13 +216,23 @@ class PaymentService
     }
 
     /**
-     * Verify payment and complete transaction
+     * Verify payment and complete transaction (idempotent - safe to call multiple times)
      */
     public function verifyPayment($reference)
     {
         $payment = $this->paymentRepository->query()->where('reference', $reference)->first();
         if (!$payment) {
             throw new \Exception('Payment not found');
+        }
+
+        // If already verified, return stored unlocked data (idempotent)
+        if ($payment->status === 'completed') {
+            return [
+                'success' => true,
+                'message' => 'Payment already verified',
+                'unlocked_achievements' => $payment->unlocked_data['achievements'] ?? [],
+                'unlocked_badges' => $payment->unlocked_data['badges'] ?? [],
+            ];
         }
 
         $gateway = PaymentGatewayFactory::make();
