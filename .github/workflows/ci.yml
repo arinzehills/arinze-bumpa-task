@@ -96,6 +96,7 @@ jobs:
           echo "DB_USERNAME=bumpa" >> .env.testing
           echo "DB_PASSWORD=password" >> .env.testing
           echo "APP_KEY=base64:$(openssl rand -base64 32)" >> .env.testing
+          echo "JWT_SECRET=$(openssl rand -base64 32)" >> .env.testing
 
       - name: Generate application key
         run: cd backend && php artisan key:generate --env=testing
