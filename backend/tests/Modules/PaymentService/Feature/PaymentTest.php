@@ -14,7 +14,7 @@ class PaymentTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * Test user can process payment
+     * Test user can initialize payment
      */
     public function test_user_can_process_payment()
     {
@@ -39,21 +39,41 @@ class PaymentTest extends TestCase
         // Get JWT token
         $token = JWTAuth::fromUser($user);
 
-        // Process payment
+        // Initialize payment (step 1 of 2-step Paystack flow)
         $response = $this->withHeaders([
             'Authorization' => "Bearer {$token}"
-        ])->postJson('/api/v1/payments', [
-            'product_id' => $product->id
+        ])->postJson('/api/v1/payments/initialize', [
+            'product_id' => $product->id,
+            'redirect_url' => 'http://localhost:5173/ecommerce/products/' . $product->id
         ]);
 
         $response->assertStatus(201)
             ->assertJson([
                 'success' => true,
-                'message' => 'Payment successful'
+                'message' => 'Payment initialized successfully'
             ])
-            ->assertJsonPath('data.cashback_points', 10); // 10% of 100
+            ->assertJsonStructure([
+                'data' => ['payment_url', 'reference']
+            ]);
 
-        // Verify payment record created
+        // Verify pending payment record created
+        $this->assertDatabaseHas('payments', [
+            'user_id' => $user->id,
+            'product_id' => $product->id,
+            'amount' => '100.00',
+            'status' => 'pending'
+        ]);
+
+        // Get the reference from response
+        $reference = $response->json('data.reference');
+
+        // Verify payment endpoint (step 2 of 2-step flow)
+        $verifyResponse = $this->getJson('/api/v1/payments/verify?reference=' . $reference);
+
+        $verifyResponse->assertStatus(200)
+            ->assertJson(['success' => true]);
+
+        // Verify payment is now completed
         $this->assertDatabaseHas('payments', [
             'user_id' => $user->id,
             'product_id' => $product->id,
@@ -63,7 +83,7 @@ class PaymentTest extends TestCase
 
         // Verify user got points
         $user->refresh();
-        $this->assertEquals(10, $user->total_points);
+        $this->assertEquals(25, $user->total_points); // 25 points in development mode
 
         // Verify product stock decreased
         $product->refresh();
