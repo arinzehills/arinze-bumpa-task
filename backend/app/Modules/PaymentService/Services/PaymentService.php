@@ -61,6 +61,10 @@ class PaymentService
             // Mark payment as completed
             $this->paymentRepository->completePayment($payment->id, 'TXN_' . uniqid());
 
+            // Get user's badge BEFORE awarding points
+            $user = $this->userRepository->find($userId);
+            $oldBadge = $user->badge;
+
             // Award cashback points
             // Development: Fixed 25 points per purchase (for easy testing)
             // Production: 10% of purchase amount (real cashback calculation)
@@ -77,10 +81,6 @@ class PaymentService
             $this->productRepository->update([
                 'stock' => $product->stock - 1
             ], $productId);
-
-            // Get user's badge BEFORE awarding points
-            $user = $this->userRepository->find($userId);
-            $oldBadge = $user->badge;
 
             // Check and unlock achievements/badges before firing event
             $purchaseData = [
@@ -159,7 +159,14 @@ class PaymentService
      */
     public function getUserPaymentHistory($userId)
     {
-        return $this->paymentRepository->getPaymentsByUser($userId);
+        $payments = $this->paymentRepository->getPaymentsByUser($userId);
+
+        return [
+            'payments' => $payments,
+            'pagination' => [
+                'total' => count($payments),
+            ]
+        ];
     }
 
     /**

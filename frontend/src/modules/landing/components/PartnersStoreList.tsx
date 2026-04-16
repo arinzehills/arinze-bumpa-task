@@ -1,12 +1,9 @@
-import { useNavigate } from "react-router-dom";
 import { PARTNER_STORES } from "../data/partnerStoreList";
-import { StoreCard } from "@components/StoreCard";
+import { StoreCard } from "@modules/landing/components/StoreCard";
 
 const PartnersStoreList = () => {
-  const navigate = useNavigate();
-
   const handleStoreClick = (storeId: string) => {
-    navigate(`/ecommerce/store/${storeId}`);
+    window.open(`/ecommerce/store/${storeId}`, "_blank");
   };
   return (
     <section

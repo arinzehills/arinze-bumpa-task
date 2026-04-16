@@ -21,10 +21,14 @@ export const EcommerceStore = () => {
   const [hideRedirect, setHideRedirect] = useState(false);
 
   // Fetch products using useGet hook
-  const { data: productsResponse, isLoading, error } = useGet<PaginatedResponse<Product>>(
-    "/products",
-    { autoFetch: true, cacheDuration: 5 * 60 * 1000 }
-  );
+  const {
+    data: productsResponse,
+    isLoading,
+    error,
+  } = useGet<PaginatedResponse<Product>>("/products", {
+    autoFetch: true,
+    cacheDuration: 5 * 60 * 1000,
+  });
 
   const products = productsResponse?.items || [];
 
@@ -59,7 +63,7 @@ export const EcommerceStore = () => {
             onClick={() => navigate("/")}
             className="text-brand-secondary hover:underline font-medium"
           >
-            ← Back
+            ← Back to home
           </button>
           <h1 className="text-2xl font-bold text-text-primary">{store.name}</h1>
           <div />
@@ -79,8 +83,10 @@ export const EcommerceStore = () => {
             <p className="text-text-muted mb-2">
               🛍️ Loading {store.name} ecommerce store...
             </p>
+            <Loader />
             <p className="text-sm text-text-secondary">
-              When you make purchases here, your achievements will be tracked automatically.
+              When you make purchases here, your achievements will be tracked
+              automatically.
             </p>
           </motion.div>
         )}
@@ -95,7 +101,8 @@ export const EcommerceStore = () => {
                   {store.name} Products
                 </h2>
                 <p className="text-text-secondary">
-                  Browse our collection and earn loyalty points with every purchase!
+                  Browse our collection and earn loyalty points with every
+                  purchase!
                 </p>
               </div>
 

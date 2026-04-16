@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@components/Button";
+import { NavBar } from "./components/NavBar";
+import PartnersStoreList from "./components/PartnersStoreList";
 
 export const Landing = () => {
   const navigate = useNavigate();
@@ -10,17 +12,8 @@ export const Landing = () => {
 
   return (
     <div className="min-h-screen bg-bg-primary">
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-bg-primary/95 backdrop-blur-md border-b border-border-color">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <div className="text-xl font-semibold text-text-primary">
-            Loyalty Rewards
-          </div>
-          <Button onClick={handleLogin} variant="primary" size="md">
-            Login
-          </Button>
-        </div>
-      </header>
+      {/* NavBar */}
+      <NavBar />
 
       {/* Hero Section */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32 text-center">
@@ -57,7 +50,7 @@ export const Landing = () => {
       </section>
 
       {/* Partner Stores Section */}
-
+      <PartnersStoreList />
       {/* Footer */}
       <footer className="bg-bg-primary border-t border-border-color py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-text-muted text-sm">
