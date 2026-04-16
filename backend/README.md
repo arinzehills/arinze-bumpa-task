@@ -1,64 +1,127 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Backend - Bumpa Loyalty Rewards System
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Laravel 10 modular monolith API for e-commerce loyalty program.
 
-## About Laravel
+## Quick Setup
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan jwt:secret
+php artisan migrate:fresh --seed
+php artisan serve
+```
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Project Structure
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```
+app/Modules/
+├── UserService/                # Auth, registration, user profile
+├── PaymentService/             # Payment processing, cashback points
+├── LoyaltyService/             # Achievements, badges, progress
+└── ECommerceProductService/    # Product catalog
+```
 
-## Learning Laravel
+Each module contains: Models, Services, Repositories, Controllers, Events, Listeners
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Database Schema
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+| Table | Purpose | Key Fields |
+|-------|---------|-----------|
+| `users` | User accounts | id, email, name, total_points, current_badge_id |
+| `payments` | Purchase history | id, user_id, product_id, amount, status |
+| `products` | E-commerce catalog | id, name, price, description |
+| `achievements` | Unlock criteria | id, name, criteria (JSON), points |
+| `badges` | Tier progression | id, name, points_threshold |
+| `user_achievements` | Progress tracking | user_id, achievement_id, unlocked_at |
 
-## Laravel Sponsors
+**Relationships:**
+- User → Payments (1:many)
+- User → UserAchievements (1:many)
+- Achievement → UserAchievements (1:many)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+## API Endpoints
 
-### Premium Partners
+| Endpoint | Method | Auth | Purpose |
+|----------|--------|------|---------|
+| `/auth/login` | POST | - | User login |
+| `/auth/register` | POST | - | User registration |
+| `/auth/me` | GET | JWT | Current user profile |
+| `/products` | GET | - | List products (paginated) |
+| `/payments` | POST | JWT | Process payment/purchase |
+| `/payments/history` | GET | JWT | User payment history |
+| `/achievements` | GET | - | All achievements |
+| `/badges` | GET | - | All badges |
+| `/users/{id}/achievements` | GET | - | User's unlocked achievements |
+| `/admin/users` | GET | Admin | All users (paginated) |
+| `/admin/users/achievements` | GET | Admin | Users with achievements |
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+## API Documentation (Swagger)
 
-## Contributing
+Swagger UI available at:
+```
+http://localhost:8000/api/documentation
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Update docs after changes:
+```bash
+php artisan swagger:generate
+```
 
-## Code of Conduct
+## Running Tests
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+php artisan test                              # Run all 25 tests
+php artisan test --filter=PaymentTest         # Run specific test class
+./vendor/bin/phpunit tests/Modules/PaymentService/Feature/PaymentTest.php  # Single file
+```
 
-## Security Vulnerabilities
+**Test Requirements:**
+- MySQL 8.0 running
+- `.env.testing` file configured with database
+- JWT_SECRET environment variable set
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+**Test Organization:** `tests/Modules/` mirrors `app/Modules/` structure
 
-## License
+## Design Decisions
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 1. Modular Monolith Architecture
+Organized by business domains (UserService, PaymentService, etc.) rather than technical layers. Enables team autonomy within modules while maintaining single codebase.
+
+### 2. Event-Driven Flow
+Decouples payment processing from achievement/badge logic via Laravel events. Allows async processing and extensibility without tight coupling.
+
+**Flow:** Payment → PurchaseCompleted Event → Achievement Checks → Badge Assignment
+
+### 3. BaseRepository Pattern
+All repositories extend a base class providing consistent CRUD interface. Reduces code duplication and standardizes data access layer.
+
+### 4. Array Cast for JSON Criteria
+Achievement criteria stored as JSON using Laravel's `array` cast. Pass arrays directly to create/update; Laravel handles encoding automatically.
+
+### 5. JWT for Stateless Auth
+Separate tokens for user vs admin authentication. Sessionless API design scales horizontally without session storage overhead.
+ 
+## Docker
+
+```bash
+docker-compose up --build
+```
+
+Services:
+- Backend: http://localhost:8000
+- phpMyAdmin: http://localhost:8080
+- RabbitMQ: http://localhost:15672
+
+## Core Features
+
+**Payment Processing:** Creates payment record, awards points (25 fixed in dev or 10% in production), triggers achievement/badge checks
+
+**Achievement System:** Unlocks based on criteria (first_purchase, purchase_count, total_spent)
+
+**Badge System:** Point-based progression (Bronze 0pts → Silver 50pts → Gold 150pts → Platinum 300pts → Diamond 500pts)
+
+**Authentication:** JWT tokens with separate user/admin stores
+
+**Pagination:** All list endpoints support `?page=1&limit=10`

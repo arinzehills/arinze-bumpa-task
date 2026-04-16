@@ -140,20 +140,29 @@ All achievements stored with `criteria` JSON field (array cast):
 
 ### Backend Tests
 ```bash
-php artisan test                              # Run all tests
-php artisan test --filter=AchievementService # Run specific test
-php artisan test --filter=LoyaltyTest        # Run feature tests
+cd backend
+composer install                              # Install dependencies
+php artisan test                              # Run all tests (25 tests)
+php artisan test --filter=PaymentTest         # Run specific test class
+./vendor/bin/phpunit tests/Modules/PaymentService/Feature/PaymentTest.php  # Run single file
 ```
 
 Tests are located at `backend/tests/Modules/` matching module structure.
 
-### Frontend Development
+**Note**: Tests require JWT_SECRET environment variable. GitHub workflows auto-generate it via `openssl rand -base64 32`. For local testing, set a value in `.env.testing` or the test will fail with "Secret is not set" error.
+
+### Frontend Development & Testing
 ```bash
 cd frontend
-npm run dev      # Start dev server (HMR enabled)
-npm run build    # Build for production
-npm run lint     # Run ESLint
+npm install                                   # Install dependencies
+npm run dev                                   # Start dev server (HMR enabled)
+npm run build                                 # Build for production
+npm run lint                                  # Run ESLint
+npm test -- --watchAll=false                 # Run tests (CI mode)
+npm test                                      # Run tests in watch mode
 ```
+
+**Note**: Frontend tests run with Jest. Tests use `setupTests.ts` which configures mocks for window.matchMedia, LocalStorage, and other browser APIs.
 
 ## Common Development Tasks
 
@@ -215,6 +224,12 @@ Database seeders are at `backend/database/seeders/` and auto-populate test data:
 
 ## Important Implementation Details
 
+### GitHub Workflow Configuration
+**Issue**: GitHub Actions uses PHP 8.1 but composer.lock had PHP 7.0 packages
+**Fix**: Run `composer update` with PHP 8.1 locally to regenerate lock file with compatible versions
+**Location**: `.github/workflows/backend-tests.yml` and `.github/workflows/ci.yml`
+**Required**: Both workflows now generate JWT_SECRET in setup step: `echo "JWT_SECRET=$(openssl rand -base64 32)" >> .env.testing`
+
 ### Badge Assignment Bug (Fixed)
 **Issue**: Badges weren't unlocking on purchase
 **Cause**: Code fetched "old badge" AFTER adding points, so comparison failed
@@ -236,6 +251,33 @@ Database seeders are at `backend/database/seeders/` and auto-populate test data:
 **Pattern**: Matches mockAI-frontend implementation - set mode in ProtectedRoute useEffect
 
 **Location**: `frontend/src/app/stores/useAppModeStore.ts`, `frontend/src/app/routing/`
+
+### User Data Refresh (Fixed)
+**Issue**: User dashboard showed stale points/badges after making a purchase
+**Cause**: useGet hook has 5-minute cache; fresh data wasn't fetched when dashboard mounted
+**Fix**: Created `useRefreshUserInfo()` hook that calls `/auth/me` with `cacheDuration: 0`
+**Location**: `frontend/src/app/hooks/useRefreshUserInfo.ts`
+**Usage**: Call at top of dashboard component: `useRefreshUserInfo();`
+
+### Redirect After Login (Implemented)
+**Pattern**: Matches mockAI-frontend design with `useRedirectStore`
+**Flow**:
+1. Unauthenticated user tries to purchase
+2. System saves current URL in `useRedirectStore`
+3. User redirected to login
+4. After login succeeds, redirected back to original URL instead of dashboard
+5. `useRedirectStore.clearRedirectUrl()` called to clean up
+
+**Location**: `frontend/src/app/stores/useRedirectStore.ts`, `frontend/src/modules/auth/Login.tsx`, `frontend/src/hooks/usePurchase.ts`
+
+### Authentication UI Components (DRY Pattern)
+**Created**: Reusable `AuthButtons` component for consistent auth UI across pages
+**Usage**: Import and use instead of duplicating auth logic
+```typescript
+<AuthButtons primarySize="sm" gap="gap-2 sm:gap-3" hideLogoutText={true} />
+```
+**Location**: `frontend/src/components/AuthButtons.tsx`
+**Note**: NavBar component has custom styling and should NOT be replaced with AuthButtons
 
 ## Payment Processing Details
 
