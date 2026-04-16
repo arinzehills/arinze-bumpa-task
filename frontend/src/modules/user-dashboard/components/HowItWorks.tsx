@@ -1,5 +1,3 @@
-import { Icon } from "@iconify/react";
-
 const steps = [
   {
     step: 1,

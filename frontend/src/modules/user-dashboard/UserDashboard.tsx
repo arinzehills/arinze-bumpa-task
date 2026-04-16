@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useAuthStore } from "@app/stores/useAuthStore";
 import WelcomeSetion from "./components/WelcomeSetion";
 import { HowItWorks } from "./components/HowItWorks";
 import WalletSection from "./components/WalletSection";
@@ -7,9 +6,10 @@ import BadgesShowcase from "./components/BadgesShowcase";
 import { RecentActivity } from "./components/RecentActivity";
 import { UnlockCelebration } from "@components/UnlockCelebration";
 import confetti from "canvas-confetti";
+import { useRefreshUserInfo } from "@app/hooks/useRefreshUserInfo";
 
 export const UserDashboard = () => {
-  const { user } = useAuthStore();
+  useRefreshUserInfo();
   const [showCelebration, setShowCelebration] = useState(false);
   const [unlockedItems, setUnlockedItems] = useState<any[]>([]);
 

@@ -15,29 +15,17 @@ interface Achievement {
   points: number;
 }
 
-interface UserAchievement {
-  id: number;
-  name: string;
-  description: string;
-  created_at?: string;
-}
-
 const AchievementsPage = () => {
   const { user } = useAuthStore();
 
   // Fetch all achievements
-  const { data: allAchievementsResponse, isLoading: isLoadingAll } =
-    useGet<PaginatedResponse<Achievement>>(
-      "/achievements?limit=100",
-      { autoFetch: true }
-    );
+  const { data: allAchievementsResponse, isLoading: isLoadingAll } = useGet<
+    PaginatedResponse<Achievement>
+  >("/achievements?limit=100", { autoFetch: true });
 
   // Fetch user's achievements
   const { data: userAchievementsResponse, isLoading: isLoadingUser } =
-    useGet<any>(
-      `/users/${user?.id}/achievements`,
-      { autoFetch: true }
-    );
+    useGet<any>(`/users/${user?.id}/achievements`, { autoFetch: true });
 
   const allAchievements = allAchievementsResponse?.items || [];
   const userAchievements = userAchievementsResponse?.achievements || [];
