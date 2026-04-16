@@ -2,6 +2,7 @@ import { useAuthStore } from "@app/stores/useAuthStore";
 import WelcomeSetion from "./components/WelcomeSetion";
 import { HowItWorks } from "./components/HowItWorks";
 import WalletSection from "./components/WalletSection";
+import BadgesShowcase from "./components/BadgesShowcase";
 
 export const UserDashboard = () => {
   const { user } = useAuthStore();
@@ -55,6 +56,9 @@ export const UserDashboard = () => {
       </div>
 
       {/* How It Works Section */}
+
+      {/* Badges Showcase Section */}
+      <BadgesShowcase />
 
       {/* Recent Activity Section */}
       <div className="bg-bg-secondary p-6 rounded-lg border border-border-color">
