@@ -1,5 +1,5 @@
 import { useAdminAuthStore } from '../useAdminAuthStore'
-import type { AdminUser } from '../useAdminAuthStore'
+import type { User } from '../useAuthStore'
 
 describe('useAdminAuthStore', () => {
   beforeEach(() => {
@@ -22,7 +22,7 @@ describe('useAdminAuthStore', () => {
 
   describe('login()', () => {
     it('should set admin user and token on login', () => {
-      const mockAdmin: AdminUser = {
+      const mockAdmin: User = {
         id: '1',
         email: 'admin@example.com',
         name: 'Admin User',
@@ -39,7 +39,7 @@ describe('useAdminAuthStore', () => {
     })
 
     it('should persist admin auth to localStorage', () => {
-      const mockAdmin: AdminUser = {
+      const mockAdmin: User = {
         id: '1',
         email: 'admin@example.com',
         name: 'Admin User',
@@ -57,7 +57,7 @@ describe('useAdminAuthStore', () => {
 
   describe('logout()', () => {
     it('should clear admin user and token on logout', () => {
-      const mockAdmin: AdminUser = {
+      const mockAdmin: User = {
         id: '1',
         email: 'admin@example.com',
         name: 'Admin User',
@@ -75,7 +75,7 @@ describe('useAdminAuthStore', () => {
 
   describe('setToken()', () => {
     it('should update admin token', () => {
-      const mockAdmin: AdminUser = {
+      const mockAdmin: User = {
         id: '1',
         email: 'admin@example.com',
         name: 'Admin User',
@@ -92,13 +92,13 @@ describe('useAdminAuthStore', () => {
 
   describe('setUser()', () => {
     it('should update admin user', () => {
-      const initialAdmin: AdminUser = {
+      const initialAdmin: User = {
         id: '1',
         email: 'admin@example.com',
         name: 'Admin User',
         role: 'admin',
       }
-      const updatedAdmin: AdminUser = {
+      const updatedAdmin: User = {
         ...initialAdmin,
         name: 'Updated Admin',
       }
@@ -114,7 +114,7 @@ describe('useAdminAuthStore', () => {
 
   describe('clearAuth()', () => {
     it('should clear all admin auth data', () => {
-      const mockAdmin: AdminUser = {
+      const mockAdmin: User = {
         id: '1',
         email: 'admin@example.com',
         name: 'Admin User',

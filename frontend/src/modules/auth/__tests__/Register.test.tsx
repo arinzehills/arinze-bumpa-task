@@ -221,7 +221,6 @@ describe('Register Form', () => {
     })
 
     it('should show loading state while submitting', async () => {
-      const user = userEvent.setup()
       const mockExecute = jest.fn().mockImplementation(
         () =>
           new Promise((resolve) => {
