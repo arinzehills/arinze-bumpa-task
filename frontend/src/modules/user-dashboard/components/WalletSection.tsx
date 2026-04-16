@@ -1,8 +1,9 @@
 import { useAuthStore } from "@app/stores/useAuthStore";
 import { useGet } from "@app/hooks/useGet";
-import { Icon } from "@iconify/react";
 import { Loader } from "@components/Loader";
 import type { PaginatedResponse } from "@app/api/types/paginationResponse";
+import { useMemo } from "react";
+import WalletBadgeItem from "./WalletBadgeItem";
 
 interface Badge {
   id: number;
@@ -22,18 +23,21 @@ const WalletSection = () => {
   const badges = badgesResponse?.items || [];
   const userPoints = user?.total_points || 0;
 
-  // Find current badge and next badge
-  const currentBadge = badges
-    .sort((a, b) => b.points_threshold - a.points_threshold)
-    .find((badge) => userPoints >= badge.points_threshold);
+  // Memoize badge calculations to avoid multiple sorts
+  const { sortedBadges, currentBadge, nextBadge, pointsNeededForNext } = useMemo(() => {
+    const sorted = [...badges].sort(
+      (a, b) => a.points_threshold - b.points_threshold
+    );
 
-  const nextBadge = badges
-    .sort((a, b) => a.points_threshold - b.points_threshold)
-    .find((badge) => badge.points_threshold > userPoints);
+    const current = [...sorted]
+      .sort((a, b) => b.points_threshold - a.points_threshold)
+      .find((badge) => userPoints >= badge.points_threshold);
 
-  const pointsNeededForNext = nextBadge
-    ? nextBadge.points_threshold - userPoints
-    : 0;
+    const next = sorted.find((badge) => badge.points_threshold > userPoints);
+    const pointsNeeded = next ? next.points_threshold - userPoints : 0;
+
+    return { sortedBadges: sorted, currentBadge: current, nextBadge: next, pointsNeededForNext: pointsNeeded };
+  }, [badges, userPoints]);
 
   if (isLoading) {
     return (
@@ -84,35 +88,14 @@ const WalletSection = () => {
             Badge Progression
           </p>
           <div className="grid grid-cols-3 gap-2">
-            {badges
-              .sort((a, b) => a.points_threshold - b.points_threshold)
-              .slice(0, 3)
-              .map((badge) => {
-                const isUnlocked = userPoints >= badge.points_threshold;
-                const isCurrent = currentBadge?.id === badge.id;
-
-                return (
-                  <div key={badge.id} className="text-center">
-                    <div
-                      className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-2 transition-all ${
-                        isCurrent
-                          ? "bg-brand-primary text-white shadow-lg scale-110"
-                          : isUnlocked
-                            ? "bg-brand-primary/30 text-brand-primary"
-                            : "bg-bg-elevated text-text-muted"
-                      }`}
-                    >
-                      <Icon icon="ph:medal-fill" className="text-2xl" />
-                    </div>
-                    <p className="text-xs font-semibold text-text-primary">
-                      {badge.name}
-                    </p>
-                    <p className="text-xs text-text-muted">
-                      {badge.points_threshold} pts
-                    </p>
-                  </div>
-                );
-              })}
+            {sortedBadges.slice(0, 3).map((badge) => (
+              <WalletBadgeItem
+                key={badge.id}
+                badge={badge}
+                isUnlocked={userPoints >= badge.points_threshold}
+                isCurrent={currentBadge?.id === badge.id}
+              />
+            ))}
           </div>
         </div>
       )}

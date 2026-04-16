@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { useGet } from "@app/hooks/useGet";
 import { useAuthStore } from "@app/stores/useAuthStore";
 import { Loader } from "@components/Loader";
+import ActivityItem from "./ActivityItem";
 
 interface Payment {
   id: string;
@@ -28,8 +29,6 @@ interface ActivityItem {
 
 export const RecentActivity = () => {
   const { user } = useAuthStore();
-  const [activities, setActivities] = useState<ActivityItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
 
   const { data: paymentHistory } = useGet<{
     payments: Payment[];
@@ -40,13 +39,14 @@ export const RecentActivity = () => {
     achievements: Achievement[];
   }>(`/users/${user?.id}/achievements`, { autoFetch: !!user });
 
-  useEffect(() => {
-    const combinedActivities: ActivityItem[] = [];
+  // Memoize combined and sorted activities to avoid recalculation
+  const { activities, isLoading } = useMemo(() => {
+    const combined: ActivityItem[] = [];
 
     // Add payment activities
     if (paymentHistory?.payments) {
       paymentHistory.payments.forEach((payment) => {
-        combinedActivities.push({
+        combined.push({
           type: "purchase",
           title: payment.product_name || "Product Purchase",
           description: `Purchased for $${(payment.amount / 100).toFixed(2)}`,
@@ -59,12 +59,12 @@ export const RecentActivity = () => {
     // Add achievement activities
     if (achievements?.achievements) {
       achievements.achievements.forEach((achievement) => {
-        combinedActivities.push({
+        combined.push({
           type: "achievement",
           title: achievement.name,
           description: "Achievement Unlocked",
           date: new Date(
-            achievement.unlocked_at || achievement.created_at || ""
+            achievement.unlocked_at || achievement.created_at || "",
           ).toLocaleDateString(),
           icon: "🏆",
         });
@@ -72,12 +72,12 @@ export const RecentActivity = () => {
     }
 
     // Sort by date descending (most recent first)
-    combinedActivities.sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    combined.sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
     );
 
-    setActivities(combinedActivities);
-    setIsLoading(false);
+    const loading = !paymentHistory && !achievements;
+    return { activities: combined, isLoading: loading };
   }, [paymentHistory, achievements]);
 
   if (isLoading) {
@@ -116,21 +116,14 @@ export const RecentActivity = () => {
       </h2>
       <div className="space-y-4 max-h-96 overflow-y-auto">
         {activities.map((activity, index) => (
-          <div
+          <ActivityItem
             key={index}
-            className="flex items-center gap-4 pb-4 border-b border-border-color last:border-0"
-          >
-            <div className="text-2xl">{activity.icon}</div>
-            <div className="flex-1">
-              <p className="font-semibold text-text-primary">{activity.title}</p>
-              <p className="text-sm text-text-secondary">
-                {activity.description}
-              </p>
-            </div>
-            <div className="text-xs text-text-muted text-right">
-              {activity.date}
-            </div>
-          </div>
+            icon={activity.icon}
+            title={activity.title}
+            description={activity.description}
+            date={activity.date}
+            index={index}
+          />
         ))}
       </div>
     </div>

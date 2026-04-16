@@ -4,7 +4,6 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { useState, useEffect } from "react";
 import { Toast } from "@components/Toast";
 import { Loader } from "@components/Loader";
 import { UnlockCelebration } from "@components/UnlockCelebration";
@@ -21,24 +20,11 @@ import Unauthorized from "@components/Unauthorized";
 import { usePaymentVerification } from "@app/hooks/usePaymentVerification";
 
 function AppContent() {
-  const { isVerifying, unlockedItems, hasPaymentReference } =
-    usePaymentVerification();
-  const [showCelebration, setShowCelebration] = useState(false);
-
-  // Show celebration when verification completes and there are unlocked items
-  useEffect(() => {
-    if (hasPaymentReference && !isVerifying && unlockedItems.length > 0) {
-      setShowCelebration(true);
-    }
-  }, [hasPaymentReference, isVerifying, unlockedItems]);
-
-  const handleCelebrationClose = () => {
-    setShowCelebration(false);
-  };
+  const { isVerifying } = usePaymentVerification();
 
   return (
     <>
-      {/* Payment verification modal */}
+      {/* Payment verification loading modal */}
       {isVerifying && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-8 rounded-lg shadow-lg">
@@ -50,13 +36,8 @@ function AppContent() {
         </div>
       )}
 
-      {/* Show unlocked items after verification */}
-      <UnlockCelebration
-        isOpen={showCelebration}
-        items={unlockedItems}
-        onClose={handleCelebrationClose}
-        showConfetti={true}
-      />
+      {/* Celebration modal (managed by store) */}
+      <UnlockCelebration />
 
       <Routes>
         {/* Landing Page */}
