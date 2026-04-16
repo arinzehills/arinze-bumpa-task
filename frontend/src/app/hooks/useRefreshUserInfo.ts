@@ -13,16 +13,16 @@ interface User {
 
 export const useRefreshUserInfo = () => {
   const { setUser } = useAuthStore();
-  const { data: userData, isLoading } = useGet<{ user: User }>("/auth/me", {
+  const { data: userData, isLoading } = useGet<User>("/auth/me", {
     autoFetch: true
   });
 
   // Automatically update user store when data fetches
   useEffect(() => {
-    if (userData?.user) {
-      setUser(userData.user);
+    if (userData) {
+      setUser(userData);
     }
   }, [userData, setUser]);
 
-  return { isLoading, userData: userData?.user };
+  return { isLoading };
 };
