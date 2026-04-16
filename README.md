@@ -137,8 +137,11 @@ Organized by **features** (landing, auth, dashboard, ecommerce, admin). Each fea
 
 **Payment Processing:**
 
+- **Paystack Integration:** Real payment gateway with two-step flow (initialize → verify)
+- Factory pattern allows extensibility to other gateways (Flutterwave, Stripe, etc.)
 - Creates payment record, awards points, triggers achievement/badge checks
 - Returns unlocked achievements and badges in single response
+- Idempotent verification (safe to verify multiple times)
 
 **Achievement System:**
 
@@ -190,7 +193,11 @@ Quick reference:
 
 - Auth: `/auth/login`, `/auth/register`, `/auth/me`
 - Products: `/products`, `/products/{id}`
-- Payments: `/payments`, `/payments/history`
+- Payments (Paystack):
+  - `POST /payments/initialize` - Start payment (redirects to Paystack)
+  - `GET /payments/verify?reference={ref}` - Verify payment (webhook from Paystack)
+  - `GET /payments/history` - User's payment history
+  - `GET /payments/total-spending` - User's total spent
 - Loyalty: `/achievements`, `/badges`, `/users/{id}/achievements`
 - Admin: `/admin/users`, `/admin/users/achievements`
 
@@ -222,6 +229,10 @@ JWT_SECRET=(set via php artisan jwt:secret)
 DB_HOST=mysql
 DB_PASSWORD=secret
 QUEUE_CONNECTION=rabbitmq
+
+# Payment Gateway (Paystack)
+PAYMENT_GATEWAY=paystack
+PAYSTACK_SECRET_KEY=sk_test_...  # Get from https://dashboard.paystack.com
 ```
 
 **Frontend (.env):**
