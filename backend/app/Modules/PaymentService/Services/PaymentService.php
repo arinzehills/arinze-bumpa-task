@@ -10,6 +10,7 @@ use App\Modules\LoyaltyService\Services\BadgeService;
 use App\Modules\PaymentService\Events\PurchaseCompleted;
 use App\Modules\PaymentService\Factories\PaymentGatewayFactory;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class PaymentService
 {
@@ -121,19 +122,29 @@ class PaymentService
             return $this->failedPaymentResponse($payment);
         }
 
-        $this->paymentRepository->update(['status' => 'completed', 'transaction_id' => $result['transaction_id']], $payment->id);
+        // Wrap all database operations in transaction (ACID compliance)
+        return DB::transaction(function () use ($payment, $result) {
+            // Mark payment as completed
+            $this->paymentRepository->update(['status' => 'completed', 'transaction_id' => $result['transaction_id']], $payment->id);
 
-        $cashbackPoints = $this->calculateCashbackPoints($payment->amount);
-        $this->userRepository->updatePoints($payment->user_id, $cashbackPoints);
-        $this->decreaseProductStock($payment->product_id);
+            // Award cashback points
+            $cashbackPoints = $this->calculateCashbackPoints($payment->amount);
+            $this->userRepository->updatePoints($payment->user_id, $cashbackPoints);
 
-        $purchaseData = ['amount' => $payment->amount, 'product_id' => $payment->product_id, 'points' => $cashbackPoints];
-        $unlockedAchievements = $this->achievementService->checkAndUnlockAchievements($payment->user_id, $purchaseData);
-        $badgeChange = $this->checkBadgeChange($payment->user_id);
+            // Decrease product stock
+            $this->decreaseProductStock($payment->product_id);
 
-        event(new PurchaseCompleted($payment->user_id, $payment->product_id, $payment->amount, $cashbackPoints));
+            // Check and unlock achievements/badges
+            $purchaseData = ['amount' => $payment->amount, 'product_id' => $payment->product_id, 'points' => $cashbackPoints];
+            $unlockedAchievements = $this->achievementService->checkAndUnlockAchievements($payment->user_id, $purchaseData);
+            $badgeChange = $this->checkBadgeChange($payment->user_id);
 
-        return $this->successfulPaymentResponse($payment, $cashbackPoints, $unlockedAchievements, $badgeChange);
+            // Fire event for other listeners
+            event(new PurchaseCompleted($payment->user_id, $payment->product_id, $payment->amount, $cashbackPoints));
+
+            // Return response
+            return $this->successfulPaymentResponse($payment, $cashbackPoints, $unlockedAchievements, $badgeChange);
+        }, attempts: 3); // Retry up to 3 times on deadlock
     }
 
     private function createPendingPayment($userId, $productId, $amount, $reference, $redirectUrl)
