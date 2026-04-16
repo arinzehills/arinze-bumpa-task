@@ -1,13 +1,21 @@
 import { Navigate, Outlet } from "react-router-dom";
+import { useEffect } from "react";
 
 import { SideToast } from "@components/Toast";
 import { useAdminAuthStore } from "@app/stores/useAdminAuthStore";
+import { useAppModeStore } from "@app/stores/useAppModeStore";
 
 export const AdminProtectedRoute = () => {
-  const { isAuthenticated, user } = useAdminAuthStore();
+  const { isAuthenticated, user, token } = useAdminAuthStore();
+  const { setMode } = useAppModeStore();
+
+  // Set app mode to 'admin' when accessing admin routes
+  useEffect(() => {
+    setMode("admin");
+  }, [setMode]);
 
   // Check if user is authenticated
-  if (!isAuthenticated) {
+  if (!isAuthenticated || !token) {
     SideToast.FireWarning({
       title: "Authentication Required",
       message: "Please login as admin to access this page",
