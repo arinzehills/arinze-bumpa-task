@@ -32,27 +32,32 @@ class PaystackGateway implements PaymentGatewayInterface
      */
     public function initializePayment(float $amount, string $reference, string $email, string $redirectUrl): array
     {
-        $response = Http::withHeaders([
-            'Authorization' => "Bearer {$this->secretKey}",
-            'Content-Type' => 'application/json',
-        ])->post("{$this->baseUrl}/transaction/initialize", [
-            'email' => $email,
-            'amount' => (int) ($amount * 100), // Paystack expects amount in kobo
-            'reference' => $reference,
-            'redirect' => $redirectUrl, // Paystack redirects here after payment
-        ]);
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => "Bearer {$this->secretKey}",
+                'Content-Type' => 'application/json',
+            ])->post("{$this->baseUrl}/transaction/initialize", [
+                'email' => $email,
+                'amount' => (int) ($amount * 100), // Paystack expects amount in kobo
+                'reference' => $reference,
+                'callback_url' => $redirectUrl, // Paystack redirects here after payment
+            ]);
 
-        if (!$response->successful()) {
-            throw new Exception('Failed to initialize Paystack payment: ' . $response->body());
+            if (!$response->successful()) {
+                throw new Exception('Failed to initialize Paystack payment: ' . $response->body());
+            }
+
+            $data = $response->json();
+
+            return [
+                'authorization_url' => $data['data']['authorization_url'],
+                'access_code' => $data['data']['access_code'],
+                'reference' => $data['data']['reference'],
+            ];
+        } catch (Exception $e) {
+            \Log::error('Paystack initialization error: ' . $e->getMessage());
+            throw $e;
         }
-
-        $data = $response->json();
-
-        return [
-            'authorization_url' => $data['data']['authorization_url'],
-            'access_code' => $data['data']['access_code'],
-            'reference' => $data['data']['reference'],
-        ];
     }
 
     /**

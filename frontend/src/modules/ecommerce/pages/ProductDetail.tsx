@@ -1,25 +1,73 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useGet } from "@app/hooks/useGet";
-import FadeAnimation from "@components/Animations/FadeAnimation";
 import { Loader } from "@components/Loader";
-import { Button } from "@components/Button";
 import { UnlockCelebration } from "@components/UnlockCelebration";
 import ConfirmModal from "@components/AnimatedModal/ConfirmModal";
 import { usePurchase } from "../hooks/usePurchase";
 import { Product } from "../components/ProductItem";
+import { useState, useEffect } from "react";
+import FadeAnimation from "@components/Animations/FadeAnimation";
+import ProductDetailHeader from "./components/ProductDetailHeader";
+import ProductGallery from "./components/ProductGallery";
+import ProductInfoPanel from "./components/ProductInfoPanel";
+import ProductErrorState from "./components/ProductErrorState";
+
+interface UnlockedItem {
+  name: string
+  description: string
+  type: 'achievement' | 'badge'
+}
+
+interface PaymentStatusResponse {
+  status: string
+  unlocked_achievements: Array<{ name: string; description: string }>
+  unlocked_badges: Array<{ name: string; description: string }>
+}
 
 const ProductDetail = () => {
   const { productId } = useParams<{ productId: string }>();
-  const navigate = useNavigate();
+  const [showPaymentCelebration, setShowPaymentCelebration] = useState(false);
+  const [paymentUnlockedItems, setPaymentUnlockedItems] = useState<UnlockedItem[]>([]);
+  const [reference, setReference] = useState<string | null>(null);
+
   const {
     showConfirm,
     setShowConfirm,
-    showCelebration,
-    setShowCelebration,
-    unlockedItems,
     isProcessing,
     handleBuyNow,
   } = usePurchase();
+
+  // Fetch payment status from backend using useGet hook
+  const { data: paymentStatus } = useGet<PaymentStatusResponse>(
+    `/payments/status?reference=${reference || ''}`,
+    { autoFetch: !!reference }
+  );
+
+  // Check for payment verification in URL
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentSuccess = urlParams.get('payment_success');
+    const ref = urlParams.get('reference');
+
+    if (paymentSuccess === 'true' && ref) {
+      setReference(ref);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
+
+  // When payment status arrives, show celebration
+  useEffect(() => {
+    if (paymentStatus && reference) {
+      const items: UnlockedItem[] = [
+        ...(paymentStatus.unlocked_achievements?.map((a) => ({ ...a, type: 'achievement' as const })) || []),
+        ...(paymentStatus.unlocked_badges?.map((b) => ({ ...b, type: 'badge' as const })) || []),
+      ];
+      if (items.length > 0) {
+        setPaymentUnlockedItems(items);
+        setShowPaymentCelebration(true);
+      }
+    }
+  }, [paymentStatus, reference]);
 
   // Fetch product details
   const {
@@ -33,11 +81,6 @@ const ProductDetail = () => {
     await handleBuyNow(product.id);
   };
 
-  const handleCelebrationClose = () => {
-    setShowCelebration(false);
-    setTimeout(() => navigate(-1), 500);
-  };
-
   if (isLoadingProduct) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -47,30 +90,19 @@ const ProductDetail = () => {
   }
 
   if (error || !product) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <FadeAnimation>
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-red-600 mb-4">
-              Product not found
-            </h1>
-            <Button onClick={() => navigate(-1)} variant="primary">
-              Go Back
-            </Button>
-          </div>
-        </FadeAnimation>
-      </div>
-    );
+    return <ProductErrorState />;
   }
 
-  const isInStock = product.stock > 0;
+  const handlePaymentCelebrationClose = () => {
+    setShowPaymentCelebration(false);
+  };
 
   return (
     <>
       <UnlockCelebration
-        isOpen={showCelebration}
-        items={unlockedItems}
-        onClose={handleCelebrationClose}
+        isOpen={showPaymentCelebration}
+        items={paymentUnlockedItems}
+        onClose={handlePaymentCelebrationClose}
         showConfetti={true}
       />
 
@@ -87,92 +119,17 @@ const ProductDetail = () => {
       />
 
       <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <header className="bg-white border-b border-gray-200">
-          <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-            <button
-              onClick={() => navigate(-1)}
-              className="text-blue-600 hover:underline font-medium"
-            >
-              ← Back to Products
-            </button>
-            <h1 className="text-xl font-bold text-gray-900">Product Details</h1>
-            <div />
-          </div>
-        </header>
+        <ProductDetailHeader />
 
-        {/* Content */}
         <main className="max-w-6xl mx-auto px-4 py-8">
           <FadeAnimation direction="up">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Product Image */}
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <div className="aspect-square bg-gray-200 rounded-lg overflow-hidden">
-                  <img
-                    src={product.image_url}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              </div>
-
-              {/* Product Details */}
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                  {product.name}
-                </h1>
-
-                <p className="text-gray-600 mb-6">SKU: {product.sku}</p>
-
-                <p className="text-gray-700 mb-6 leading-relaxed">
-                  {product.description}
-                </p>
-
-                {/* Price */}
-                <div className="mb-6">
-                  <p className="text-sm text-gray-600">Price</p>
-                  <p className="text-4xl font-bold text-blue-600">
-                    ${parseFloat(product.price).toFixed(2)}
-                  </p>
-                </div>
-
-                {/* Stock Status */}
-                <div className="mb-6">
-                  <p
-                    className={`text-lg font-semibold ${
-                      isInStock ? "text-green-600" : "text-red-600"
-                    }`}
-                  >
-                    {isInStock ? `${product.stock} in stock` : "Out of stock"}
-                  </p>
-                </div>
-
-                {/* Loyalty Rewards Info */}
-                <div className="mb-8 p-4 bg-blue-50 rounded-lg">
-                  <p className="text-sm font-semibold text-blue-900 mb-2">
-                    🎁 Loyalty Rewards
-                  </p>
-                  <p className="text-sm text-blue-800">
-                    Earn ~${(parseFloat(product.price) / 10).toFixed(2)} in
-                    loyalty points with this purchase!
-                  </p>
-                </div>
-
-                {/* Buy Button */}
-                <Button
-                  onClick={() => setShowConfirm(true)}
-                  disabled={!isInStock || isProcessing}
-                  variant="black"
-                  size="lg"
-                  fullWidth
-                >
-                  {isProcessing
-                    ? "Processing..."
-                    : isInStock
-                      ? "Buy Now"
-                      : "Out of Stock"}
-                </Button>
-              </div>
+              <ProductGallery product={product} />
+              <ProductInfoPanel
+                product={product}
+                isProcessing={isProcessing}
+                onBuyClick={() => setShowConfirm(true)}
+              />
             </div>
           </FadeAnimation>
         </main>

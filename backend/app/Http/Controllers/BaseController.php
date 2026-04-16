@@ -87,9 +87,15 @@ abstract class BaseController extends Controller
     {
         \Log::error($e->getMessage());
 
+        $code = (int) ($e->getCode() ?: 500);
+        // Ensure code is a valid HTTP status code (100-599)
+        if ($code < 100 || $code > 599) {
+            $code = 500;
+        }
+
         return $this->errorResponse(
             $e->getMessage(),
-            $e->getCode() ?: 500
+            $code
         );
     }
 }
