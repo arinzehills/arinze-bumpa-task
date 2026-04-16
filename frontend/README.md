@@ -99,6 +99,7 @@ src/
 
 ## Running Tests
 
+### Unit & Integration Tests (Jest)
 ```bash
 npm test -- --watchAll=false   # CI mode (run once)
 npm test                        # Watch mode (re-run on changes)
@@ -109,8 +110,28 @@ npm run lint                    # ESLint check
 - Jest configuration in `jest.config.js`
 - Mocks in `src/setupTests.ts` for `window.matchMedia`, `localStorage`, `sessionStorage`
 - Test files in `src/**/__tests__/` directory
+- **Coverage:** 100+ tests for hooks, stores, routing, auth components
 
- 
+### End-to-End Tests (Cypress)
+```bash
+npm run e2e              # Open Cypress GUI (interactive)
+npm run e2e:auth        # Run authentication E2E tests
+npm run e2e:run         # Run all E2E tests (headless)
+```
+
+**Test Coverage:**
+- **Authentication:** Login, Register, Admin Login, Protected Routes, Logout, Session Persistence (21 tests)
+- More E2E tests coming for: Ecommerce flow, Dashboard workflows, Error handling
+
+**Setup:**
+- Cypress configuration in `cypress.config.ts`
+- E2E tests in `cypress/e2e/` directory
+- Helper functions in `cypress/support/auth-helpers.ts`
+- See `cypress/README.md` for detailed E2E documentation
+
+⚠️ **Before running E2E tests:** Start the dev server with `npm run dev` first
+
+
 
 ## Styling
 
