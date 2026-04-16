@@ -151,6 +151,6 @@ class PaymentTest extends TestCase
         ])->getJson('/api/v1/payments/history');
 
         $response->assertStatus(200)
-            ->assertJsonCount(1, 'data');
+            ->assertJsonCount(1, 'data.payments');
     }
 }
