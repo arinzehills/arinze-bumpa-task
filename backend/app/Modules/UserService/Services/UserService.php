@@ -73,7 +73,6 @@ class UserService
     {
         $query = $this->userRepository->query()
             ->with(['badge'])
-            ->where('user_type', '!=', 'admin') // Exclude admin users
             ->orderBy('created_at', 'desc');
 
         $total = $query->count();

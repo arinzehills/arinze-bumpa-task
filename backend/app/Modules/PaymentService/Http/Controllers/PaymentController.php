@@ -16,27 +16,6 @@ class PaymentController extends BaseController
     }
 
     /**
-     * Process payment
-     */
-    public function processPayment(ProcessPaymentRequest $request)
-    {
-        try {
-            $result = $this->paymentService->processPayment(
-                auth()->id(),
-                $request->product_id
-            );
-
-            if ($result['success']) {
-                return $this->successResponse($result, $result['message'], 201);
-            } else {
-                return $this->errorResponse($result['message'], 400);
-            }
-        } catch (\Exception $e) {
-            return $this->handleException($e);
-        }
-    }
-
-    /**
      * Get user's payment history
      */
     public function getUserPaymentHistory()

@@ -5,6 +5,7 @@ namespace App\Modules\PaymentService\Factories;
 use App\Modules\PaymentService\Contracts\PaymentGatewayInterface;
 use App\Modules\PaymentService\PaymentGateways\PaystackGateway;
 use App\Modules\PaymentService\PaymentGateways\FlutterwaveGateway;
+use App\Modules\PaymentService\PaymentGateways\MockPaymentGateway;
 use InvalidArgumentException;
 
 class PaymentGatewayFactory
@@ -23,6 +24,7 @@ class PaymentGatewayFactory
         return match ($gateway) {
             'paystack' => new PaystackGateway(),
             'flutterwave' => new FlutterwaveGateway(),
+            'mock' => new MockPaymentGateway(),
             default => throw new InvalidArgumentException("Unsupported payment gateway: {$gateway}"),
         };
     }

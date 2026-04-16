@@ -14,6 +14,15 @@ class PaymentTest extends TestCase
     use RefreshDatabase;
 
     /**
+     * Use mock payment gateway for all tests
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+        config(['payment.gateway' => 'mock']);
+    }
+
+    /**
      * Test user can initialize payment
      */
     public function test_user_can_process_payment()
@@ -91,7 +100,7 @@ class PaymentTest extends TestCase
     }
 
     /**
-     * Test payment requires authentication
+     * Test payment initialization requires authentication
      */
     public function test_payment_requires_authentication()
     {
@@ -104,15 +113,16 @@ class PaymentTest extends TestCase
             'image_url' => 'https://example.com/image.jpg'
         ]);
 
-        $response = $this->postJson('/api/v1/payments', [
-            'product_id' => $product->id
+        $response = $this->postJson('/api/v1/payments/initialize', [
+            'product_id' => $product->id,
+            'redirect_url' => 'http://localhost:5173/ecommerce/products/' . $product->id
         ]);
 
         $response->assertStatus(401);
     }
 
     /**
-     * Test payment fails for non-existent product
+     * Test payment initialization fails for non-existent product
      */
     public function test_payment_fails_for_non_existent_product()
     {
@@ -127,8 +137,9 @@ class PaymentTest extends TestCase
 
         $response = $this->withHeaders([
             'Authorization' => "Bearer {$token}"
-        ])->postJson('/api/v1/payments', [
-            'product_id' => 999
+        ])->postJson('/api/v1/payments/initialize', [
+            'product_id' => 999,
+            'redirect_url' => 'http://localhost:5173/ecommerce/products/999'
         ]);
 
         $response->assertStatus(422); // Validation error

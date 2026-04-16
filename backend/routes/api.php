@@ -45,7 +45,6 @@ Route::prefix('v1')->group(function () {
     Route::prefix('payments')->group(function () {
         // Protected routes
         Route::middleware('auth:api')->group(function () {
-            Route::post('/', [PaymentController::class, 'processPayment']);
             Route::post('/initialize', [PaymentController::class, 'initializePayment']);
             Route::get('/history', [PaymentController::class, 'getUserPaymentHistory']);
             Route::get('/total-spending', [PaymentController::class, 'getUserTotalSpending']);
