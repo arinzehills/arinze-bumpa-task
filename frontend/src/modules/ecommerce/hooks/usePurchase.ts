@@ -1,6 +1,9 @@
 import { usePost } from '@app/hooks/usePost'
+import { useAuthStore } from '@app/stores/useAuthStore'
+import { useRedirectStore } from '@app/stores/useRedirectStore'
+import { useNavigate } from 'react-router-dom'
+import { SideToast } from '@components/Toast'
 import { useState } from 'react'
-
 
 interface PaymentResponse {
   cashback_points: number
@@ -24,8 +27,26 @@ export const usePurchase = () => {
   const [showCelebration, setShowCelebration] = useState(false)
   const [unlockedItems, setUnlockedItems] = useState<UnlockedItem[]>([])
   const { execute: executePayment, isLoading: isProcessing } = usePost<PaymentResponse>()
+  const { isAuthenticated } = useAuthStore()
+  const { setRedirectUrl } = useRedirectStore()
+  const navigate = useNavigate()
 
   const handleBuyNow = async (productId: number) => {
+    // Check if user is authenticated
+    if (!isAuthenticated) {
+      // Save current page URL for redirect after login
+      setRedirectUrl(window.location.pathname)
+
+      SideToast.FireWarning({
+        title: "Login Required",
+        message: "Please login to make a purchase"
+      })
+
+      // Redirect to login
+      navigate("/login")
+      return
+    }
+
     const response = await executePayment(
       '/payments',
       { product_id: productId },

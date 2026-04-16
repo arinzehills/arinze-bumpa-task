@@ -6,6 +6,7 @@ import { InputField } from "@components/InputField";
 import { usePost } from "@app/hooks/usePost";
 import { useAppModeStore } from "../../app/stores/useAppModeStore";
 import { useAuthStore } from "@app/stores/useAuthStore";
+import { useRedirectStore } from "@app/stores/useRedirectStore";
 
 interface LoginResponse {
   user: {
@@ -36,6 +37,7 @@ export const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuthStore();
   const { setMode } = useAppModeStore();
+  const { redirectUrl, clearRedirectUrl } = useRedirectStore();
   const { isLoading, execute } = usePost<LoginResponse>();
 
   const formik = useFormik({
@@ -64,7 +66,13 @@ export const Login = () => {
         // Store auth data
         login(response.user, response.token);
 
-        navigate("/dashboard");
+        // Check if there's a redirect URL (e.g., product detail page)
+        if (redirectUrl) {
+          navigate(redirectUrl);
+          clearRedirectUrl();
+        } else {
+          navigate("/dashboard");
+        }
       }
     },
   });

@@ -7,6 +7,7 @@ import { Loader } from "@components/Loader";
 import ProductItem, { Product } from "./components/ProductItem";
 import { motion } from "framer-motion";
 import type { PaginatedResponse } from "@app/api/types/paginationResponse";
+import { useAuthStore } from "@app/stores/useAuthStore";
 
 const STORE_DETAILS: Record<string, { name: string; description: string }> = {
   "1": { name: "Bumpa", description: "Quality products for everyday needs" },
