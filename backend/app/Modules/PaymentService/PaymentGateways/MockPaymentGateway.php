@@ -9,7 +9,7 @@ class MockPaymentGateway implements PaymentGatewayInterface
     /**
      * Initialize mock payment - always succeeds
      */
-    public function initializePayment($amount, $reference, $email, $callbackUrl)
+    public function initializePayment(float $amount, string $reference, string $email, string $redirectUrl): array
     {
         return [
             'authorization_url' => 'https://checkout.paystack.com/mock/' . $reference,
@@ -21,7 +21,7 @@ class MockPaymentGateway implements PaymentGatewayInterface
     /**
      * Verify mock payment - always succeeds
      */
-    public function verifyPayment($reference)
+    public function verifyPayment(string $reference): array
     {
         return [
             'verified' => true,

@@ -90,9 +90,9 @@ class PaymentTest extends TestCase
             'status' => 'completed'
         ]);
 
-        // Verify user got points
+        // Verify user got points (10% of 100)
         $user->refresh();
-        $this->assertEquals(25, $user->total_points); // 25 points in development mode
+        $this->assertEquals(10, $user->total_points);
 
         // Verify product stock decreased
         $product->refresh();
