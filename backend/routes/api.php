@@ -41,11 +41,19 @@ Route::prefix('v1')->group(function () {
         Route::get('/{product}', [ProductController::class, 'show']);
     });
 
-    // Payment routes (protected)
-    Route::middleware('auth:api')->prefix('payments')->group(function () {
-        Route::post('/', [PaymentController::class, 'processPayment']);
-        Route::get('/history', [PaymentController::class, 'getUserPaymentHistory']);
-        Route::get('/total-spending', [PaymentController::class, 'getUserTotalSpending']);
+    // Payment routes
+    Route::prefix('payments')->group(function () {
+        // Protected routes
+        Route::middleware('auth:api')->group(function () {
+            Route::post('/', [PaymentController::class, 'processPayment']);
+            Route::post('/initialize', [PaymentController::class, 'initializePayment']);
+            Route::get('/history', [PaymentController::class, 'getUserPaymentHistory']);
+            Route::get('/total-spending', [PaymentController::class, 'getUserTotalSpending']);
+        });
+        // Verify endpoint (not protected - Paystack redirects here)
+        Route::get('/verify', [PaymentController::class, 'verifyPayment']);
+        // Status endpoint (frontend fetches unlocked items from database)
+        Route::get('/status', [PaymentController::class, 'getPaymentStatus']);
     });
 
     // Loyalty routes

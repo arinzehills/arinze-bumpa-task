@@ -15,11 +15,15 @@ class Payment extends Model
         'amount',
         'status',
         'transaction_id',
+        'reference',
+        'redirect_url',
+        'unlocked_data',
         'payment_method'
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
+        'unlocked_data' => 'array',
     ];
 
     /**

@@ -18,6 +18,9 @@ class CreatePaymentsTable extends Migration
             $table->decimal('amount', 10, 2);
             $table->string('status')->default('pending'); // pending, completed, failed
             $table->string('transaction_id')->nullable();
+            $table->string('reference')->unique()->nullable(); // Paystack transaction reference
+            $table->string('redirect_url')->nullable(); // Frontend URL to redirect after payment
+            $table->json('unlocked_data')->nullable(); // Unlocked achievements and badges
             $table->string('payment_method')->nullable(); // paystack, flutterwave, etc
             $table->timestamps();
 
