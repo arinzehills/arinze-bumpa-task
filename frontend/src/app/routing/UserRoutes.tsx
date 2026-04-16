@@ -4,6 +4,7 @@ import {
   type SidebarLink,
 } from "@components/layouts/DashboardLayout";
 import UserDashboard from "@modules/user-dashboard/UserDashboard";
+import Profile from "@modules/user-dashboard/pages/Profile";
 import { ProtectedRoute } from "./ProtectedRoute";
 import PartnersStoreList from "@modules/landing/components/PartnersStoreList";
 
@@ -19,9 +20,9 @@ const userSidebarLinks: SidebarLink[] = [
     icon: "ph:trophy",
   },
   {
-    name: "Partners",
+    name: "Shop From Partners",
     url: "/dashboard/partners",
-    icon: "ph:store",
+    icon: "mdi:partnership",
   },
   {
     name: "Profile",
@@ -41,7 +42,7 @@ export const UserRoutes = () => (
         <Route index element={<UserDashboard />} />
         <Route path="achievements" element={<div>Achievements</div>} />
         <Route path="partners" element={<PartnersStoreList />} />
-        <Route path="profile" element={<div>Profile</div>} />
+        <Route path="profile" element={<Profile />} />
       </Route>
     </Route>
   </>

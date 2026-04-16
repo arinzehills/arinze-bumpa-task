@@ -1,4 +1,7 @@
 import { useAuthStore } from "@app/stores/useAuthStore";
+import WelcomeSetion from "./components/WelcomeSetion";
+import { HowItWorks } from "./components/HowItWorks";
+import WalletSection from "./components/WalletSection";
 
 export const UserDashboard = () => {
   const { user } = useAuthStore();
@@ -6,15 +9,17 @@ export const UserDashboard = () => {
   return (
     <div className="space-y-8">
       {/* Welcome Section */}
-      <div>
-        <h1 className="text-3xl font-bold text-text-primary mb-2">
-          Welcome back, {user?.name}! 👋
-        </h1>
-        <p className="text-text-secondary">
-          Track your achievements and earn rewards on every purchase
-        </p>
-      </div>
+      <WelcomeSetion />
 
+      {/* How It Works & Wallet Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-stretch">
+        <div className="lg:col-span-2 h-full">
+          <HowItWorks />
+        </div>
+        <div className="lg:col-span-3 h-full">
+          <WalletSection />
+        </div>
+      </div>
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Total Points Card */}
@@ -48,6 +53,8 @@ export const UserDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* How It Works Section */}
 
       {/* Recent Activity Section */}
       <div className="bg-bg-secondary p-6 rounded-lg border border-border-color">
