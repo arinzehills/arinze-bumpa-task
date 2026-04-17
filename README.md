@@ -23,7 +23,13 @@ A complete e-commerce loyalty program with customer dashboard, admin panel, and 
 
 ## Quick Start
 
-**Docker (Recommended):**
+**Start everything (one command, but build first):**
+
+```bash
+docker-compose up
+```
+
+**Docker (with build):**
 
 ```bash
 docker-compose up --build
