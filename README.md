@@ -52,6 +52,20 @@ Seed database only:
 docker-compose exec backend php artisan db:seed
 ```
 
+## Login Credentials
+
+After seeding, use these credentials to test the application:
+
+**Customer Dashboard:**
+
+- Email: `john@example.com`
+- Password: `123456`
+
+**Admin Panel:**
+
+- Email: `admin@loyalty.com`
+- Password: `123456`
+
 Generate Swagger docs:
 
 ```bash
