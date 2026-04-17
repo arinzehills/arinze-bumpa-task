@@ -2,6 +2,8 @@
 
 A complete e-commerce loyalty program with customer dashboard, admin panel, and achievement/badge tracking system.
 
+**📹 [Product Demo Video](https://www.loom.com/share/f6caf1578f0d49aea11746e67a49ae26)** - Watch the full system in action
+
 ## Project Overview
 
 **What it does:**
